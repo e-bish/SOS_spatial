@@ -3,6 +3,7 @@
 # Load libraries
 library(tidyverse)
 library(here)
+library(lubridate)
 
 ################################################################################
 #Load data
@@ -17,38 +18,49 @@ net_2022 <- here::here("data","net_2022.csv")
 net_2022 <- read_csv(net_2022)
 
 #create a data frame with all four years of data combined
-net_all <- bind_rows(net_2018.19, net_2021, net_2022)
+net_all <- bind_rows(net_2018.19, net_2021, net_2022) %>% 
+  mutate(date = paste(day, month, year,sep="-")) %>% 
+  mutate(date = dmy(date)) %>% 
+  mutate(jday = yday(date)) 
 
 ################################################################################
 #prepare data for analysis
 #expand grid to everywhere we sampled so that joint absences of species are included 
 #create grid so zeros get counted for each species 
-unique_df<- net_all %>%  distinct(year, month, day, site, ipa, station, species)
-all<- expand_grid(unique_df, species) %>% mutate(month = as.numeric(month)) 
+unique_df<- unique(net_all[c("year", "month", "jday","site","ipa")])
+species <- c("Chinook", "Chum", "Surf Smelt", "Herring" )
+all<- expand_grid(unique_df, species) %>% mutate(month = as.numeric(month))
 
 net_all2 <- net_all %>% 
   filter(org_type == "Fish") %>%
-  group_by(year, month, day, site, ipa, species) %>%
+  group_by(year, month, jday, site, ipa, species) %>%
   summarise(total= sum(species_count)) %>% 
   ungroup( ) %>%
   mutate(month = as.numeric(month)) %>%
   mutate(total = as.numeric(total)) %>%
   mutate_if(is.character, as.factor) %>%
   merge(all, all=TRUE) %>%
-  mutate(total=replace_na(total, 0)) %>%
-  mutate(veg = recode(site, 'COR' = "Present",
-                      'TUR'="Present",
-                      'FAM'="Absent",
-                      'DOK'="Absent",
-                      'EDG'="Absent",
-                      'SHR'="Present")) %>% 
-  mutate(a_100m = recode(site, 'COR' = runif(1, 0, 30),
-                         'TUR'=runif(1, 0, 30),
-                         'FAM'=runif(1, 0, 30),
-                         'DOK'=runif(1, 0, 30),
-                         'EDG'=runif(1, 0, 30),
-                         'SHR'=runif(1, 0, 30)))
-# mutate(a_100m = runif(nrow(net_all), 0, 100)) %>% 
+  mutate(total=replace_na(total, 0)) 
+
+#code for each site to add a year post- restoration. Here are the 2018 numbers: 
+
+# COR' = 6, 'TUR'= 3,'FAM'= 3,'DOK'= 5,'EDG'= 2,'SHR'= 4
+
+
+
+#other additions: vegetation (categorical or can we get %? and %armoring)
+  # mutate(veg = recode(site, 'COR' = "Present",
+  #                     'TUR'="Present",
+  #                     'FAM'="Absent",
+  #                     'DOK'="Absent",
+  #                     'EDG'="Absent",
+  #                     'SHR'="Present"))
+#mutate(a_100m = recode(site, 'COR' = runif(1, 0, 30),
+                         # 'TUR'=runif(1, 0, 30),
+                         # 'FAM'=runif(1, 0, 30),
+                         # 'DOK'=runif(1, 0, 30),
+                         # 'EDG'=runif(1, 0, 30),
+                         # 'SHR'=runif(1, 0, 30))) %>% 
 # mutate(a_500m = runif(nrow(net_all), 0, 100)) %>% 
 # mutate(a_1km = runif(nrow(net_all), 0, 100)) %>% 
 # mutate(a_basin = runif(nrow(net_all), 0, 100))
