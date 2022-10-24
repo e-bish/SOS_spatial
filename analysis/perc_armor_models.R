@@ -40,11 +40,14 @@ net_all2 <- net_all %>%
   mutate(total = as.numeric(total)) %>%
   mutate_if(is.character, as.factor) %>%
   merge(all, all=TRUE) %>%
-  mutate(total=replace_na(total, 0)) 
-
-#code for each site to add a year post- restoration. Here are the 2018 numbers: 
-
-# COR' = 6, 'TUR'= 3,'FAM'= 3,'DOK'= 5,'EDG'= 2,'SHR'= 4
+  mutate(total=replace_na(total, 0)) %>% 
+  mutate(rest_yr = recode(site, 'COR' = 2012, #multiple phases carried out between 2012 and 2015
+                          'TUR' = 2015, 
+                          'FAM' = 2015, 
+                          'DOK' = 2013, 
+                          'EDG' = 2016, 
+                          'SHR' = 2014)) %>% 
+  mutate(rest_age = year - rest_yr)
 
 
 
