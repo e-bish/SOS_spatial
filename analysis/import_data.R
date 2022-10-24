@@ -44,7 +44,7 @@ net <- net_import %>%
   ungroup() 
 
 #write to csv
-write_csv(net, here("analysis","data","net_18.19.csv")) 
+write_csv(net, here("data","net_18.19.csv")) 
 
 ###############################################################################
 ## 2021 data
@@ -66,7 +66,7 @@ net_2021 <- net_import2 %>%
   ungroup() 
 
 #write to csv
-write_csv(net_2021, here("analysis","data","net_2021.csv"))
+write_csv(net_2021, here("data","net_2021.csv"))
 
 ###############################################################################
 ## 2022 data
@@ -83,4 +83,4 @@ net_2022 <- net_import3 %>%
   ungroup() 
 
 #write to csv
-write_csv(net_2022, here("analysis","data","net_2022.csv"))
+write_csv(net_2022, here("data","net_2022.csv"))
