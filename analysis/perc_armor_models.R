@@ -64,51 +64,51 @@ net_all2 <- net_all %>%
                     'DOK'="Absent",
                     'EDG'="Absent",
                     'SHR'="Present",
-                    'HO' = "Present", #need to actually look this up for all jubilee sites
-                    'LL' = "Present", #need to actually look this up for all jubilee sites
-                    'MA' = "Present", #need to actually look this up for all jubilee sites
+                    'HO' = "Present", 
+                    'LL' = "Absent", 
+                    'MA' = "Absent",
                     'PP' = "Present", #need to actually look this up for all jubilee sites
-                    'TL' = "Present", #need to actually look this up for all jubilee sites
-                    'WA' = "Present")) %>% 
+                    'TL' = "Present", #We may not have good data for these ones
+                    'WA' = "Absent")) %>% #need to actually look this up for all jubilee sites
   mutate(a_100m = recode(site, #simulate percent armor data at 100m radius
-                      'COR' = runif(1, 0, 30), 
-                      'TUR'=runif(1, 0, 30),
-                      'FAM'=runif(1, 0, 30),
-                      'DOK'=runif(1, 0, 30),
-                      'EDG'=runif(1, 0, 30),
-                      'SHR'=runif(1, 0, 30),
-                      'HO' = runif(1, 0, 30), 
-                      'LL' = runif(1, 0, 30),
-                      'MA' = runif(1, 0, 30), 
-                      'PP' = runif(1, 0, 30),
-                      'TL' = runif(1, 0, 30),
-                      'WA' = runif(1, 0, 30))) %>% 
+                      'COR' = runif(1, 0, 100), 
+                      'TUR'=runif(1, 0, 100),
+                      'FAM'=runif(1, 0, 100),
+                      'DOK'=runif(1, 0, 100),
+                      'EDG'=runif(1, 0, 100),
+                      'SHR'=runif(1, 0, 100),
+                      'HO' = runif(1, 0, 100), 
+                      'LL' = runif(1, 0, 100),
+                      'MA' = runif(1, 0, 100), 
+                      'PP' = runif(1, 0, 100),
+                      'TL' = runif(1, 0, 100),
+                      'WA' = runif(1, 0, 100))) %>% 
   mutate(a_500m = recode(site, #simulate percent armor data at 500m radius
-                         'COR' = runif(1, 0, 30), 
-                         'TUR'=runif(1, 0, 30),
-                         'FAM'=runif(1, 0, 30),
-                         'DOK'=runif(1, 0, 30),
-                         'EDG'=runif(1, 0, 30),
-                         'SHR'=runif(1, 0, 30),
-                         'HO' = runif(1, 0, 30), 
-                         'LL' = runif(1, 0, 30),
-                         'MA' = runif(1, 0, 30), 
-                         'PP' = runif(1, 0, 30),
-                         'TL' = runif(1, 0, 30),
-                         'WA' = runif(1, 0, 30))) %>% 
+                         'COR' = runif(1, 0, 100), 
+                         'TUR'=runif(1, 0, 100),
+                         'FAM'=runif(1, 0, 100),
+                         'DOK'=runif(1, 0, 100),
+                         'EDG'=runif(1, 0, 100),
+                         'SHR'=runif(1, 0, 100),
+                         'HO' = runif(1, 0, 100), 
+                         'LL' = runif(1, 0, 100),
+                         'MA' = runif(1, 0, 100), 
+                         'PP' = runif(1, 0, 100),
+                         'TL' = runif(1, 0, 100),
+                         'WA' = runif(1, 0, 100))) %>% 
   mutate(a_1km = recode(site, #simulate percent armor data at 1km radius
-                        'COR' = runif(1, 0, 30), 
-                        'TUR'=runif(1, 0, 30),
-                        'FAM'=runif(1, 0, 30),
-                        'DOK'=runif(1, 0, 30),
-                        'EDG'=runif(1, 0, 30),
-                        'SHR'=runif(1, 0, 30),
-                        'HO' = runif(1, 0, 30), 
-                        'LL' = runif(1, 0, 30),
-                        'MA' = runif(1, 0, 30), 
-                        'PP' = runif(1, 0, 30),
-                        'TL' = runif(1, 0, 30),
-                        'WA' = runif(1, 0, 30))) %>% 
+                        'COR' = runif(1, 0, 100), 
+                        'TUR'=runif(1, 0, 100),
+                        'FAM'=runif(1, 0, 100),
+                        'DOK'=runif(1, 0, 100),
+                        'EDG'=runif(1, 0, 100),
+                        'SHR'=runif(1, 0, 100),
+                        'HO' = runif(1, 0, 100), 
+                        'LL' = runif(1, 0, 100),
+                        'MA' = runif(1, 0, 100), 
+                        'PP' = runif(1, 0, 100),
+                        'TL' = runif(1, 0, 100),
+                        'WA' = runif(1, 0, 100))) %>% 
   mutate(a_basin = recode(site, #simulate percent armor data at basin scale
                           'COR' = runif(1, 0, 30), 
                           'TUR'=runif(1, 0, 30),
@@ -130,20 +130,20 @@ net_list <- net_all2 %>% group_split(species)
 ##Chinook 
 
 #Check simple model to get an estimate for theta
-base.mod <- glm.nb(total ~ 1, data = net_list[[2]], link = "log")
+base.mod <- glm.nb(total ~ 1, data = net_list[[1]], link = "log")
 theta.1 <- base.mod$theta
 
 #create model list
 model.list <- list(
-  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2), data = net_list[[2]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_100m, data = net_list[[2]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_500m, data = net_list[[2]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_1km, data = net_list[[2]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_basin, data = net_list[[2]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1)
+  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2), data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
+  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_100m, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
+  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_500m, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
+  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_1km, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
+  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_basin, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1)
 )
 
 ## create a vector of predictor variables
-mod.terms <- c("null", "100m", "500m", "1km", "region")
+mod.terms <- c("null", "100m", "500m", "1km", "basin")
 
 #create a table to store model information and provide column names
 mod.tab <- as.data.frame(mod.terms)
