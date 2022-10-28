@@ -6,6 +6,7 @@ library(here)
 library(lubridate)
 library(MASS)
 library(MuMIn)
+library(lme4)
 
 ################################################################################
 #Load data
@@ -19,23 +20,24 @@ net_2021 <- read_csv(net_2021)
 net_2022 <- here::here("data","net_2022.csv")
 net_2022 <- read_csv(net_2022)
 
-#create a data frame with all four years of data combined
+#create a data frame with all four years of data combined and a term for calendar day of year
 net_all <- bind_rows(net_2018.19, net_2021, net_2022) %>% 
-  mutate(date = paste(day, month, year,sep="-")) %>% 
+  filter(!ipa == "Armored_2") %>% #remove second armored site from Titlow in 2021
+  mutate(date = paste(day, month, year, sep="-")) %>% 
   mutate(date = dmy(date)) %>% 
-  mutate(jday = yday(date)) 
+  mutate(yday = yday(date)) 
 
 ################################################################################
 #prepare data for analysis
 #expand grid to everywhere we sampled so that joint absences of species are included 
 #create grid so zeros get counted for each species 
-unique_df<- unique(net_all[c("year", "month", "jday","site","ipa")])
+unique_df<- unique(net_all[c("year", "month", "yday","site","ipa")])
 species <- c("Chinook", "Chum", "Surf Smelt", "Herring" )
 all<- expand_grid(unique_df, species) %>% mutate(month = as.numeric(month))
 
 net_all2 <- net_all %>% 
   filter(species %in% c("Chinook", "Chum", "Surf Smelt", "Herring"))%>%
-  group_by(year, month, jday, site, ipa, species) %>%
+  group_by(year, month, yday, site, ipa, species) %>%
   summarise(total= sum(species_count)) %>% 
   ungroup( ) %>%
   mutate(month = as.numeric(month)) %>%
@@ -53,10 +55,11 @@ net_all2 <- net_all %>%
                           'HO' = 2016, 
                           'LL' = 2018,
                           'MA' = 2018, 
-                          'PP' = 2013,
+                          'PR' = 2013,
                           'TL' = 2017,
                           'WA' = 2016)) %>% 
   mutate(rest_age = year - rest_yr) %>% 
+  mutate(rest_age = ifelse(ipa != "Restored", 0, rest_age)) %>% 
   mutate(veg = recode(site, #can we get continuous %eelgrass data?
                     'COR' = "Present",
                     'TUR'="Present",
@@ -67,24 +70,24 @@ net_all2 <- net_all %>%
                     'HO' = "Present", 
                     'LL' = "Absent", 
                     'MA' = "Absent",
-                    'PP' = "Present", #need to actually look this up for all jubilee sites
+                    'PR' = "Present", #need to actually look this up for all jubilee sites
                     'TL' = "Present", #We may not have good data for these ones
                     'WA' = "Absent")) %>% #need to actually look this up for all jubilee sites
   mutate(a_100m = recode(site, #simulate percent armor data at 100m radius
-                      'COR' = runif(1, 0, 100), 
-                      'TUR'=runif(1, 0, 100),
-                      'FAM'=runif(1, 0, 100),
-                      'DOK'=runif(1, 0, 100),
-                      'EDG'=runif(1, 0, 100),
-                      'SHR'=runif(1, 0, 100),
+                      'COR'= runif(1, 0, 100), 
+                      'TUR'= runif(1, 0, 100),
+                      'FAM'= runif(1, 0, 100),
+                      'DOK'= runif(1, 0, 100),
+                      'EDG'= runif(1, 0, 100),
+                      'SHR'= runif(1, 0, 100),
                       'HO' = runif(1, 0, 100), 
                       'LL' = runif(1, 0, 100),
                       'MA' = runif(1, 0, 100), 
-                      'PP' = runif(1, 0, 100),
+                      'PR' = runif(1, 0, 100),
                       'TL' = runif(1, 0, 100),
                       'WA' = runif(1, 0, 100))) %>% 
   mutate(a_500m = recode(site, #simulate percent armor data at 500m radius
-                         'COR' = runif(1, 0, 100), 
+                         'COR'= runif(1, 0, 100), 
                          'TUR'=runif(1, 0, 100),
                          'FAM'=runif(1, 0, 100),
                          'DOK'=runif(1, 0, 100),
@@ -93,7 +96,7 @@ net_all2 <- net_all %>%
                          'HO' = runif(1, 0, 100), 
                          'LL' = runif(1, 0, 100),
                          'MA' = runif(1, 0, 100), 
-                         'PP' = runif(1, 0, 100),
+                         'PR' = runif(1, 0, 100),
                          'TL' = runif(1, 0, 100),
                          'WA' = runif(1, 0, 100))) %>% 
   mutate(a_1km = recode(site, #simulate percent armor data at 1km radius
@@ -106,7 +109,7 @@ net_all2 <- net_all %>%
                         'HO' = runif(1, 0, 100), 
                         'LL' = runif(1, 0, 100),
                         'MA' = runif(1, 0, 100), 
-                        'PP' = runif(1, 0, 100),
+                        'PR' = runif(1, 0, 100),
                         'TL' = runif(1, 0, 100),
                         'WA' = runif(1, 0, 100))) %>% 
   mutate(a_basin = recode(site, #simulate percent armor data at basin scale
@@ -119,7 +122,7 @@ net_all2 <- net_all %>%
                           'HO' = runif(1, 0, 30), 
                           'LL' = runif(1, 0, 30),
                           'MA' = runif(1, 0, 30), 
-                          'PP' = runif(1, 0, 30),
+                          'PR' = runif(1, 0, 30),
                           'TL' = runif(1, 0, 30),
                           'WA' = runif(1, 0, 30)))
 
@@ -135,11 +138,11 @@ theta.1 <- base.mod$theta
 
 #create model list
 model.list <- list(
-  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2), data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_100m, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_500m, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_1km, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ site + veg + rest_age + jday + I(jday^2) + a_basin, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1)
+  glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2), data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
+  glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + a_100m, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
+  glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + a_500m, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
+  glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + a_1km, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
+  glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + a_basin, data = net_list[[1]], link = "log", control = glm.control(maxit =500), init.theta = theta.1)
 )
 
 ## create a vector of predictor variables
@@ -168,6 +171,11 @@ mod.tab$a.weights <- round(weights_raw/sum(weights_raw),4)
 #order table by akaike weights
 mod.tab <- mod.tab[order(-mod.tab$a.weights),]
 
-##Extract the best fit mod
-# nbinom.mod <- model.list[[]]
-# summary(nbinom.mod)
+## GLMM
+null_glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday), data = net_list[[1]]
+                 , control = glmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=2e5)))
+summary(null_glmm)
+
+a100_glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_100m, data = net_list[[1]]
+                      , control = glmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=2e5)))
+summary(a100_glmm)
