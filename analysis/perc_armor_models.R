@@ -171,11 +171,45 @@ mod.tab$a.weights <- round(weights_raw/sum(weights_raw),4)
 #order table by akaike weights
 mod.tab <- mod.tab[order(-mod.tab$a.weights),]
 
+################################################################################
 ## GLMM
 null_glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday), data = net_list[[1]]
-                 , control = glmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=2e5)))
+                 , control = glmerControl(optCtrl=list(maxfun=1e5)))
 summary(null_glmm)
 
-a100_glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_100m, data = net_list[[1]]
-                      , control = glmerControl(optimizer = "bobyqa", optCtrl=list(maxfun=2e5)))
+a100_glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_100m, 
+                      data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
 summary(a100_glmm)
+
+#create model list
+glmm.mod.list <- list (glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + yday + I(yday^2), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
+  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_100m, data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
+  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_500m, data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)),
+  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_1km, data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
+  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_basin, data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))))
+
+## create a vector of predictor variables
+mod.terms <- c("null", "100m", "500m", "1km", "basin")
+
+#create a table to store model information and provide column names
+mod.tab <- as.data.frame(mod.terms)
+
+# Define columns for storing values
+mod.tab$a.weights <- mod.tab$dAICc <- mod.tab$AICc <- NA
+
+for(i in 1:nrow(mod.tab)){
+  # Calculate metrics
+  mod.tab$AICc[i] <- round(AICc(model.list[[i]]),2)
+}
+
+# Calculate delta AIC
+mod.tab$dAICc <- mod.tab$AICc - min(mod.tab$AICc)
+
+# Use the delta AIC to calculate the difference
+weights_raw <- exp(-0.5*mod.tab$dAICc)
+
+# normalise (i.e. divide by the summed value) for the akaike weights
+mod.tab$a.weights <- round(weights_raw/sum(weights_raw),4)
+
+#order table by akaike weights
+mod.tab <- mod.tab[order(-mod.tab$a.weights),]
