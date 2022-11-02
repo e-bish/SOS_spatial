@@ -8,6 +8,9 @@ library(MASS)
 library(MuMIn)
 library(lme4)
 
+#set seed
+set.seed(123)
+
 ################################################################################
 #Load data
 #load data (raw data downloaded/formatted in "import_data.R")
@@ -172,14 +175,44 @@ mod.tab$a.weights <- round(weights_raw/sum(weights_raw),4)
 mod.tab <- mod.tab[order(-mod.tab$a.weights),]
 
 ################################################################################
-## GLMM
-null_glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday), data = net_list[[1]]
-                 , control = glmerControl(optCtrl=list(maxfun=1e5)))
-summary(null_glmm)
+#simulate data for GLMM
+glmm.null <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
+mod.mat <- model.matrix(glmm.null)
+summary(glmm.null)
 
-a100_glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_100m, 
-                      data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
-summary(a100_glmm)
+Chinook <- net_list[[1]]
+
+site.eff <- rnorm(n = 12, mean = 0, sd = sd)
+
+Chinook$site.eff <- recode()
+
+modsim <- function(spp, sd, pars, size) {
+  b0<-pars[1]
+
+    site.eff <- rnorm(n = 3, mean = 0, sd = sd)
+  b2<-pars[2]
+  b3<-pars[3]
+  b4<-pars[4]
+  be5<-pars[5]
+  b6<-pars[6]
+  ndat<-nrow(spp)
+  logmu<-b0 + b1 + b2*spp$ipa + b3*spp$veg + b4*spp$rest_age + b5*log(spp$yday) + b6*spp$a_100m
+  y<-rnbinom(n = ndat, mu = exp(logmu), size = size)
+  return(y)
+}
+
+parstest <- c(7.31, -0.54, -1.72, 0.02, -1.14, -0.3) #added 0.1 to each from the null model, made up a parameter for %armor
+  
+newY<-modsim(spp = net_list[[1]], sd = 1, pars = parstest, size = 0.5)
+#newdat<-data.frame(NewY = newY, disp = mtcars$disp)
+summary(lm(newY ~ disp, data = newdat))
+
+
+
+
+################################################################################
+
+## GLMM
 
 #create model list
 glmm.mod.list <- list (glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + yday + I(yday^2), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
