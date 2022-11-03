@@ -176,11 +176,13 @@ mod.tab <- mod.tab[order(-mod.tab$a.weights),]
 
 ################################################################################
 #simulate data for GLMM
-glmm.null <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
-mod.mat <- model.matrix(glmm.null)
-summary(glmm.null)
 
-modsim <- function(spp, sd, pars, size) {
+#start with values from the null model
+glmm.null <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
+summary(glmm.null)
+plot(glmm.null)
+
+modsim <- function(spp, pars, size) {
   #recode site as a random variable drawn from a normal distribution
   site.num <- rnorm(n = length(unique(spp$site)), mean = 0, sd = 1) 
   site.eff <- as.numeric(as.character(factor(spp$site, labels = site.num)))
@@ -204,14 +206,19 @@ modsim <- function(spp, sd, pars, size) {
   return(y)
 }
 
-parstest <- c(7.31, -0.07, -0.54, -1.72, 0.02, -1.14, -0.3) #added 0.1 to each from the null model, made up a parameter for %armor
-  
-simY<-modsim(spp = net_list[[1]], sd = 20, pars = parstest, size = 60)
+parstest <- c(7.31, -0.07, -0.54, -1.72, 0.02, -1.14, -0.05) #added 0.1 to each from the null model, made up a parameter for %armor
+simY<-modsim(spp = net_list[[1]], pars = parstest, size = 500)
 simdat<-data.frame(SimY = simY, net_list[[1]])
 
-sim.mod <- glmer.nb(SimY ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_100m, data = simdat, control = glmerControl(optCtrl=list(maxfun=2e5)))
 
+sim.mod <- glmer.nb(SimY ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_100m, data = simdat, control = glmerControl(optCtrl=list(maxfun=2e7)))
 summary(sim.mod)
+plot(sim.mod)
+
+ggplot(simdat) + 
+  geom_histogram(aes(x = SimY, color = "SimY")) + 
+  #geom_histogram(aes(x = total, color = "total")) + 
+  labs(x = "")
 
 ################################################################################
 
