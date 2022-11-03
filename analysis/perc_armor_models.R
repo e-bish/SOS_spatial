@@ -180,35 +180,38 @@ glmm.null <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday), dat
 mod.mat <- model.matrix(glmm.null)
 summary(glmm.null)
 
-Chinook <- net_list[[1]]
-
-site.eff <- rnorm(n = 12, mean = 0, sd = sd)
-
-Chinook$site.eff <- recode()
-
 modsim <- function(spp, sd, pars, size) {
-  b0<-pars[1]
-
-    site.eff <- rnorm(n = 3, mean = 0, sd = sd)
-  b2<-pars[2]
-  b3<-pars[3]
-  b4<-pars[4]
-  be5<-pars[5]
-  b6<-pars[6]
-  ndat<-nrow(spp)
-  logmu<-b0 + b1 + b2*spp$ipa + b3*spp$veg + b4*spp$rest_age + b5*log(spp$yday) + b6*spp$a_100m
-  y<-rnbinom(n = ndat, mu = exp(logmu), size = size)
+  #recode site as a random variable drawn from a normal distribution
+  site.num <- rnorm(n = length(unique(spp$site)), mean = 0, sd = 1) 
+  site.eff <- as.numeric(as.character(factor(spp$site, labels = site.num)))
+  
+  #set intercept and parameter values
+  b0 <- pars[1]
+  b1 <- site.eff #random effect for site ~categorical
+  b2 <- pars[2] #ipaNatural ~categorical
+  b3 <- pars[3] #ipaRestored ~categorical
+  b4 <- pars[4] #vegAbsent ~categorical
+  b5 <- pars[5] #rest_age ~continuous
+  b6 <- pars[6] #log(yday) ~continuous
+  b7 <- pars[7] #%armor in 100m ~continuous
+  ndat <- nrow(spp)
+  
+  #define the model equation
+  logmu <- b0 + b1 + b2*ifelse(spp$ipa == "Natural", 1, 0) + b3*ifelse(spp$ipa == "Restored", 1, 0) + b4*ifelse(spp$veg == "Absent", 1, 0) + b5*spp$rest_age + b6*log(spp$yday) + b7*spp$a_100m
+  
+  #generate dataset
+  y <- rnbinom(n = ndat, mu = exp(logmu), size = size) #negative binomial distribution
   return(y)
 }
 
-parstest <- c(7.31, -0.54, -1.72, 0.02, -1.14, -0.3) #added 0.1 to each from the null model, made up a parameter for %armor
+parstest <- c(7.31, -0.07, -0.54, -1.72, 0.02, -1.14, -0.3) #added 0.1 to each from the null model, made up a parameter for %armor
   
-newY<-modsim(spp = net_list[[1]], sd = 1, pars = parstest, size = 0.5)
-#newdat<-data.frame(NewY = newY, disp = mtcars$disp)
-summary(lm(newY ~ disp, data = newdat))
+simY<-modsim(spp = net_list[[1]], sd = 20, pars = parstest, size = 60)
+simdat<-data.frame(SimY = simY, net_list[[1]])
 
+sim.mod <- glmer.nb(SimY ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_100m, data = simdat, control = glmerControl(optCtrl=list(maxfun=2e5)))
 
-
+summary(sim.mod)
 
 ################################################################################
 
