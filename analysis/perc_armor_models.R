@@ -206,11 +206,14 @@ modsim <- function(spp, pars, size) {
   return(y)
 }
 
-parstest <- c(7.31, -0.07, -0.54, -1.72, 0.02, -1.14, -0.05) #added 0.1 to each from the null model, made up a parameter for %armor
-simY<-modsim(spp = net_list[[1]], pars = parstest, size = 500)
+#set "true" model parameters
+parstest <- c(7.31, -0.07, -0.54, -1.72, 0.02, -1.14, -0.025) #added 0.1 to each from the null model, made up a parameter for %armor
+
+#simulate fish counts and add to a dataframe with real data values
+simY<-modsim(spp = net_list[[1]], pars = parstest, size = 10)
 simdat<-data.frame(SimY = simY, net_list[[1]])
 
-
+#run the model with simulated fish counts
 sim.mod <- glmer.nb(SimY ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_100m, data = simdat, control = glmerControl(optCtrl=list(maxfun=2e7)))
 summary(sim.mod)
 plot(sim.mod)
@@ -226,10 +229,10 @@ ggplot(simdat) +
 
 #create model list
 glmm.mod.list <- list (glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + yday + I(yday^2), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
-  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_100m, data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
-  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_500m, data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)),
-  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_1km, data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
-  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_basin, data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))))
+  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + scale(yday) + scale(a_100m), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
+  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + scale(yday) + scale(a_500m), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)),
+  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + scale(yday) + scale(a_1km), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
+  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + scale(yday) + scale(a_basin), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))))
 
 ## create a vector of predictor variables
 mod.terms <- c("null", "100m", "500m", "1km", "basin")
@@ -256,3 +259,6 @@ mod.tab$a.weights <- round(weights_raw/sum(weights_raw),4)
 
 #order table by akaike weights
 mod.tab <- mod.tab[order(-mod.tab$a.weights),]
+
+
+glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + scale(yday) + scale(a_100m), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
