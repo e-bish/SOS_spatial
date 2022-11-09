@@ -75,7 +75,7 @@ a_500m <- st_intersection(armor, b_500m) %>% mutate(buffer = "500m")
 a_1km <- st_intersection(armor, b_1km) %>% mutate(buffer = "1.2km")
 
 a_buffered <- rbind(a_100m, a_500m, a_1km) %>% 
-  mutate(armor_length = st_length(SHAPE)) %>% #can't use the SHAPE_length attribute anymore, because we cropped it!
+  mutate(armor_length = st_length(SHAPE)) %>% #can't use the SHAPE_length attribute, because we cropped it!
   st_drop_geometry() %>% #remove geometry so we can just work with the numbers
   group_by(site, buffer) %>% 
   summarize(armor_length = sum(armor_length)) #sum feet of armoring per site
@@ -92,18 +92,19 @@ perc_armor <- perc_armor %>%
   mutate(perc.armor = round(perc.armor, 2)) %>% 
   pivot_wider(names_from = buffer, values_from = perc.armor) %>% 
   replace(is.na(.), 0) %>% 
-  transform(site = case_when(site == "Dockton" ~ "DOK" ,
+  transform(site = case_when(site == "Dockton" ~ "DOK",
                              site == "Cornet_Bay" ~ "COR",
                              site == "Edgewater" ~ "EDG",
                              site == "Family_Tides" ~ "FAM",
                              site == "Seahurst" ~ "SHR",
                              site == "Turn_Island" ~ "TUR",
                              site == "Lost_Lake" ~ "LL",
-                             site == "Titlow" ~ "TL" ,
+                             site == "Titlow" ~ "TL",
                              #site == "Penrose_Point" ~ "PR",
                              #site == "Waterman" ~ "WA" ,
                              #site == "Howarth_Park" ~ "HO" ,
-                             site == "Maylor_Point" ~ "MA")) 
+                             site == "Maylor_Point" ~ "MA")) %>% 
+  add_row(site = c("PR", "WA", "HO")) #remove this when we get coords for these sites
 
 #write to csv
 write_csv(perc_armor, here("data","perc_armor.csv"))
