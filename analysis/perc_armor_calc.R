@@ -5,6 +5,7 @@ library(ggnewscale)
 library(ggspatial)
 library(sf)
 library(lwgeom)
+library(units)
 
 ## load data and inspect
 
@@ -64,8 +65,8 @@ s_500m <- st_intersection(shoreline, b_500m) %>% mutate(buffer = "500m")
 s_1km <- st_intersection(shoreline, b_1km) %>% mutate(buffer = "1.2km")
 
 s_buffered <- rbind(s_100m, s_500m, s_1km) %>% 
-  mutate(shore_length = st_length(geometry)) %>% 
-  st_drop_geometry()
+  mutate(shore_length = st_length(geometry)) %>% #calculate length of shoreline within the buffer extent
+  st_drop_geometry()  #remove geometry so we can just work with the numbers
 
 #crop armor data to buffers
 a_100m <- st_intersection(armor, b_100m) %>% mutate(buffer = "100m")
@@ -74,17 +75,39 @@ a_1km <- st_intersection(armor, b_1km) %>% mutate(buffer = "1.2km")
 
 a_buffered <- rbind(a_100m, a_500m, a_1km) %>% 
   mutate(armor_length = st_length(SHAPE)) %>% #can't use the SHAPE_length attribute anymore, because we cropped it!
-  st_drop_geometry()
-
-#feet of armoring per buffer extent
-a_buffered <- a_buffered %>% 
+  st_drop_geometry() %>% #remove geometry so we can just work with the numbers
   group_by(site, buffer) %>% 
-  summarize(armor_length = sum(armor_length))
+  summarize(armor_length = sum(armor_length)) #sum feet of armoring per site
 
 #calculate percent armor
 perc_armor <- inner_join(s_buffered, a_buffered, ID = c("site", "buffer")) %>% 
-  mutate(perc_armor = (armor_length/shore_length)*100) 
+  mutate(perc.armor = (armor_length/shore_length)*100) 
 
-#export
+#tidy for export
+#create grid so zeros get counted in areas with zero armoring
+site<- unique(SOS_sites$site)
+buffer <- c("100m", "500m", "1.2km")
+sites_buffers<- expand_grid(site, buffer) 
 
+#format to integrate with catch data
+perc_armor <- perc_armor %>% 
+  merge(sites_buffers, all=TRUE) %>%
+  transform(site = case_when(site == "Dockton" ~ "DOK" ,
+                             site == "Cornet_Bay" ~ "COR",
+                             site == "Edgewater" ~ "EDG",
+                             site == "Family_Tides" ~ "FAM",
+                             site == "Seahurst" ~ "SHR",
+                             site == "Turn_Island" ~ "TUR",
+                             site == "Lost_Lake" ~ "LL",
+                             site == "Titlow" ~ "TL" ,
+                             #site == "Penrose_Point" ~ "PR",
+                             #site == "Waterman" ~ "WA" ,
+                             #site == "Howarth_Park" ~ "HO" ,
+                             site == "Maylor_Point" ~ "MA")) %>%
+  mutate(perc.armor = drop_units(perc.armor)) %>% 
+  mutate(perc.armor = round(perc.armor, 2)) %>% 
+  mutate(perc.armor = replace_na(perc.armor, 0)) %>% 
+  select(-c(OBJECTID, shore_length, armor_length))
 
+#write to csv
+write_csv(net_2021, here("data","perc_armor.csv"))
