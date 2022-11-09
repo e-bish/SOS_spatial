@@ -1,5 +1,6 @@
 ## Percent Armor Calculations
 
+library(here)
 library(tidyverse)
 library(ggnewscale)
 library(ggspatial)
@@ -10,15 +11,15 @@ library(units)
 ## load data and inspect
 
 #Shorezone shoreline shapefile
-shoreline <- here::here("data","shorezone_shoreline_only", "shorezone_shoreline_only.shp")
+shoreline <- here("data","shorezone_shoreline_only", "shorezone_shoreline_only.shp")
 shoreline <- read_sf(shoreline, crs = 2927) #Washington State Plane South (ft) / NAD83
 
 #Beach Strategies armoring shapefile
-armor <- here::here("data","WDFW_ESRP_Shoreline_Armor.gdb")
+armor <- here("data","WDFW_ESRP_Shoreline_Armor.gdb")
 armor <- read_sf(armor, crs = 2927) #Washington State Plane South (ft) / NAD83
 
 #GPS locations for our survey stations with each ipa
-SOS_sites <- here::here("data", "SOS_site_coords.csv")
+SOS_sites <- here("data", "SOS_site_coords.csv")
 SOS_sites <- read_csv(SOS_sites) %>% 
   st_as_sf(coords = c("long", "lat"), crs = 4326) #WGS84
 
@@ -83,15 +84,14 @@ a_buffered <- rbind(a_100m, a_500m, a_1km) %>%
 perc_armor <- inner_join(s_buffered, a_buffered, ID = c("site", "buffer")) %>% 
   mutate(perc.armor = (armor_length/shore_length)*100) 
 
-#tidy for export
-#create grid so zeros get counted in areas with zero armoring
-site<- unique(SOS_sites$site)
-buffer <- c("100m", "500m", "1.2km")
-sites_buffers<- expand_grid(site, buffer) 
-
+###############################################################################
 #format to integrate with catch data
 perc_armor <- perc_armor %>% 
-  merge(sites_buffers, all=TRUE) %>%
+  dplyr::select(-c(OBJECTID, shore_length, armor_length)) %>% 
+  mutate(perc.armor = drop_units(perc.armor)) %>% 
+  mutate(perc.armor = round(perc.armor, 2)) %>% 
+  pivot_wider(names_from = buffer, values_from = perc.armor) %>% 
+  replace(is.na(.), 0) %>% 
   transform(site = case_when(site == "Dockton" ~ "DOK" ,
                              site == "Cornet_Bay" ~ "COR",
                              site == "Edgewater" ~ "EDG",
@@ -103,11 +103,13 @@ perc_armor <- perc_armor %>%
                              #site == "Penrose_Point" ~ "PR",
                              #site == "Waterman" ~ "WA" ,
                              #site == "Howarth_Park" ~ "HO" ,
-                             site == "Maylor_Point" ~ "MA")) %>%
-  mutate(perc.armor = drop_units(perc.armor)) %>% 
-  mutate(perc.armor = round(perc.armor, 2)) %>% 
-  mutate(perc.armor = replace_na(perc.armor, 0)) %>% 
-  select(-c(OBJECTID, shore_length, armor_length))
+                             site == "Maylor_Point" ~ "MA")) 
 
 #write to csv
-write_csv(net_2021, here("data","perc_armor.csv"))
+write_csv(perc_armor, here("data","perc_armor.csv"))
+
+################################################################################
+#calculate % armor by basin
+
+
+
