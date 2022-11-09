@@ -85,5 +85,6 @@ a_buffered <- a_buffered %>%
 perc_armor <- inner_join(s_buffered, a_buffered, ID = c("site", "buffer")) %>% 
   mutate(perc_armor = (armor_length/shore_length)*100) 
 
-  
+#export
+
 
