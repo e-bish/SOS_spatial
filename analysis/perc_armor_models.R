@@ -30,6 +30,9 @@ net_all <- bind_rows(net_2018.19, net_2021, net_2022) %>%
   mutate(date = dmy(date)) %>% 
   mutate(yday = yday(date)) 
 
+perc_armor <- here("data", "perc_armor.csv")
+perc_armor <- read_csv(perc_armor)
+
 ################################################################################
 #prepare data for analysis
 #expand grid to everywhere we sampled so that joint absences of species are included 
@@ -76,58 +79,7 @@ net_all2 <- net_all %>%
                     'PR' = "Present", #need to actually look this up for all jubilee sites
                     'TL' = "Present", #We may not have good data for these ones
                     'WA' = "Absent")) %>% #need to actually look this up for all jubilee sites
-  mutate(a_100m = recode(site, #simulate percent armor data at 100m radius
-                      'COR'= runif(1, 0, 100), 
-                      'TUR'= runif(1, 0, 100),
-                      'FAM'= runif(1, 0, 100),
-                      'DOK'= runif(1, 0, 100),
-                      'EDG'= runif(1, 0, 100),
-                      'SHR'= runif(1, 0, 100),
-                      'HO' = runif(1, 0, 100), 
-                      'LL' = runif(1, 0, 100),
-                      'MA' = runif(1, 0, 100), 
-                      'PR' = runif(1, 0, 100),
-                      'TL' = runif(1, 0, 100),
-                      'WA' = runif(1, 0, 100))) %>% 
-  mutate(a_500m = recode(site, #simulate percent armor data at 500m radius
-                         'COR'= runif(1, 0, 100), 
-                         'TUR'=runif(1, 0, 100),
-                         'FAM'=runif(1, 0, 100),
-                         'DOK'=runif(1, 0, 100),
-                         'EDG'=runif(1, 0, 100),
-                         'SHR'=runif(1, 0, 100),
-                         'HO' = runif(1, 0, 100), 
-                         'LL' = runif(1, 0, 100),
-                         'MA' = runif(1, 0, 100), 
-                         'PR' = runif(1, 0, 100),
-                         'TL' = runif(1, 0, 100),
-                         'WA' = runif(1, 0, 100))) %>% 
-  mutate(a_1km = recode(site, #simulate percent armor data at 1km radius
-                        'COR' = runif(1, 0, 100), 
-                        'TUR'=runif(1, 0, 100),
-                        'FAM'=runif(1, 0, 100),
-                        'DOK'=runif(1, 0, 100),
-                        'EDG'=runif(1, 0, 100),
-                        'SHR'=runif(1, 0, 100),
-                        'HO' = runif(1, 0, 100), 
-                        'LL' = runif(1, 0, 100),
-                        'MA' = runif(1, 0, 100), 
-                        'PR' = runif(1, 0, 100),
-                        'TL' = runif(1, 0, 100),
-                        'WA' = runif(1, 0, 100))) %>% 
-  mutate(a_basin = recode(site, #simulate percent armor data at basin scale
-                          'COR' = runif(1, 0, 30), 
-                          'TUR'=runif(1, 0, 30),
-                          'FAM'=runif(1, 0, 30),
-                          'DOK'=runif(1, 0, 30),
-                          'EDG'=runif(1, 0, 30),
-                          'SHR'=runif(1, 0, 30),
-                          'HO' = runif(1, 0, 30), 
-                          'LL' = runif(1, 0, 30),
-                          'MA' = runif(1, 0, 30), 
-                          'PR' = runif(1, 0, 30),
-                          'TL' = runif(1, 0, 30),
-                          'WA' = runif(1, 0, 30)))
+  inner_join(perc_armor, ID = "site") 
 
 #create a list of data for each of the focal species to run through the model
 net_list <- net_all2 %>% group_split(species) 
@@ -139,43 +91,20 @@ net_list <- net_all2 %>% group_split(species)
 base.mod <- glm.nb(total ~ 1, data = net_list[[1]], link = "log")
 theta.1 <- base.mod$theta
 
-#create model list
-model.list <- list(
-  glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2), data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + a_100m, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + a_500m, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + a_1km, data = net_list[[1]], link = "log", control = glm.control(maxit = 500), init.theta = theta.1),
-  glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + a_basin, data = net_list[[1]], link = "log", control = glm.control(maxit =500), init.theta = theta.1)
-)
+#evaluate GLMs
+null.mod <- glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2), data = net_list[[1]], link = "log", control = glm.control(maxit = 500))
+a100.mod <- glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + scale(X100m), data = net_list[[1]], link = "log", control = glm.control(maxit = 500))
+a500.mod <- glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + scale(X500m), data = net_list[[1]], link = "log", control = glm.control(maxit = 500))
+a1km.mod <- glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + scale(X1.2km), data = net_list[[1]], link = "log", control = glm.control(maxit = 500))
+#areg.mod <- glm.nb(total ~ ipa + veg + rest_age + yday + I(yday^2) + a_basin, data = net_list[[1]], link = "log", control = glm.control(maxit =500))
 
-## create a vector of predictor variables
-mod.terms <- c("null", "100m", "500m", "1km", "basin")
-
-#create a table to store model information and provide column names
-mod.tab <- as.data.frame(mod.terms)
-
-# Define columns for storing values
-mod.tab$a.weights <- mod.tab$dAICc <- mod.tab$AICc <- NA
-
-for(i in 1:nrow(mod.tab)){
-  # Calculate metrics
-  mod.tab$AICc[i] <- round(AICc(model.list[[i]]),2)
-}
-
-# Calculate delta AIC
-mod.tab$dAICc <- mod.tab$AICc - min(mod.tab$AICc)
-
-# Use the delta AIC to calculate the difference
-weights_raw <- exp(-0.5*mod.tab$dAICc)
-
-# normalise (i.e. divide by the summed value) for the akaike weights
-mod.tab$a.weights <- round(weights_raw/sum(weights_raw),4)
-
-#order table by akaike weights
-mod.tab <- mod.tab[order(-mod.tab$a.weights),]
+summary(null.mod)
+summary(a100.mod)
+summary(a500.mod)
+summary(a1km.mod)
 
 ################################################################################
-#simulate data for GLMM
+#simulate data for GLMMs
 
 #start with values from the null model
 glmm.null <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
@@ -199,7 +128,7 @@ modsim <- function(spp, pars, size) {
   ndat <- nrow(spp)
   
   #define the model equation
-  logmu <- b0 + b1 + b2*ifelse(spp$ipa == "Natural", 1, 0) + b3*ifelse(spp$ipa == "Restored", 1, 0) + b4*ifelse(spp$veg == "Absent", 1, 0) + b5*spp$rest_age + b6*log(spp$yday) + b7*spp$a_100m
+  logmu <- b0 + b1 + b2*ifelse(spp$ipa == "Natural", 1, 0) + b3*ifelse(spp$ipa == "Restored", 1, 0) + b4*ifelse(spp$veg == "Absent", 1, 0) + b5*spp$rest_age + b6*log(spp$yday) + b7*spp$X100m
   
   #generate dataset
   y <- rnbinom(n = ndat, mu = exp(logmu), size = size) #negative binomial distribution
@@ -207,14 +136,14 @@ modsim <- function(spp, pars, size) {
 }
 
 #set "true" model parameters
-parstest <- c(7.31, -0.07, -0.54, -1.72, 0.02, -1.14, -0.025) #added 0.1 to each from the null model, made up a parameter for %armor
+parstest <- c(7.31, -0.07, -0.54, -1.72, 0.02, -1.14, -0.5) #added 0.1 to each from the null model, made up a parameter for %armor
 
 #simulate fish counts and add to a dataframe with real data values
 simY<-modsim(spp = net_list[[1]], pars = parstest, size = 10)
 simdat<-data.frame(SimY = simY, net_list[[1]])
 
 #run the model with simulated fish counts
-sim.mod <- glmer.nb(SimY ~ (1 | site) + ipa + veg + rest_age + log(yday) + a_100m, data = simdat, control = glmerControl(optCtrl=list(maxfun=2e7)))
+sim.mod <- glmer.nb(SimY ~ (1 | site) + ipa + veg + rest_age + log(yday) + scale(X100m), data = simdat, control = glmerControl(optCtrl=list(maxfun=2e9)))
 summary(sim.mod)
 plot(sim.mod)
 
@@ -225,40 +154,15 @@ ggplot(simdat) +
 
 ################################################################################
 
-## GLMM
+## GLMMs
 
-#create model list
-glmm.mod.list <- list (glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + yday + I(yday^2), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
-  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + scale(yday) + scale(a_100m), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
-  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + scale(yday) + scale(a_500m), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)),
-  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + scale(yday) + scale(a_1km), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))),
-  glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + scale(yday) + scale(a_basin), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))))
+null.glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
+a100.glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + scale(X100m), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
+a500.glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + scale(X500m), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
+a1km.glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + log(yday) + scale(X1.2km), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
+#areg.glmm <- glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + yday + scale(Xbasin), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5))))
 
-## create a vector of predictor variables
-mod.terms <- c("null", "100m", "500m", "1km", "basin")
-
-#create a table to store model information and provide column names
-mod.tab <- as.data.frame(mod.terms)
-
-# Define columns for storing values
-mod.tab$a.weights <- mod.tab$dAICc <- mod.tab$AICc <- NA
-
-for(i in 1:nrow(mod.tab)){
-  # Calculate metrics
-  mod.tab$AICc[i] <- round(AICc(model.list[[i]]),2)
-}
-
-# Calculate delta AIC
-mod.tab$dAICc <- mod.tab$AICc - min(mod.tab$AICc)
-
-# Use the delta AIC to calculate the difference
-weights_raw <- exp(-0.5*mod.tab$dAICc)
-
-# normalise (i.e. divide by the summed value) for the akaike weights
-mod.tab$a.weights <- round(weights_raw/sum(weights_raw),4)
-
-#order table by akaike weights
-mod.tab <- mod.tab[order(-mod.tab$a.weights),]
-
-
-glmer.nb(total ~ (1 | site) + ipa + veg + rest_age + scale(yday) + scale(a_100m), data = net_list[[1]], control = glmerControl(optCtrl=list(maxfun=1e5)))
+summary(null.glmm)
+summary(a100.glmm)
+summary(a500.glmm)
+summary(a1km.glmm)
