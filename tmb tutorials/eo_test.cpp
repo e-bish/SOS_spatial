@@ -1,9 +1,9 @@
-#include <TMB.hpp>
+#include <TMB.hpp> // always copy this in 
 
-template<class Type>
+template<class Type> //always copy this in
 Type objective_function<Type>::operator() ()
 {
-  using namespace density;
+  using namespace density; //every line ends in a semicolon, case sensitive but you don't need to give it a length
   DATA_VECTOR(y); //fish density
   DATA_VECTOR(po2);
   DATA_VECTOR(invtemp);
@@ -33,7 +33,7 @@ Type objective_function<Type>::operator() ()
   phi=exp(logphi);
   
   //Number of observations
-  //int n = y.size();
+  //int n = y.size(); //when specifying local variables, do need to include the size. nameofvariable.size is a nifty function to get that
   
   
   //Derived variable: mi
@@ -44,7 +44,7 @@ Type objective_function<Type>::operator() ()
   vector<Type> yhat(n);
   
   
-  for(int i = 0; i < n; i++) {
+  for(int i = 0; i < n; i++) { //indexing starts at zero, i through n
       mi(i) = avgbn * Ao*  po2(i) * exp(Eo * invtemp(i));
     if (mi(i) < s_cut) {
       log_yhat(i) = mi(i) * s_slope;
@@ -54,7 +54,7 @@ Type objective_function<Type>::operator() ()
     yhat(i) = exp(log_yhat(i));
   }
   
-  Type jnll = -sum(dtweedie(y, yhat, phi, p, true));
+  Type jnll = -sum(dtweedie(y, yhat, phi, p, true)); //objective function, this is what you're minimizing for the negative log likelihood
   
   //Stuff to return and report
   return jnll;
