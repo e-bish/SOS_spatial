@@ -61,7 +61,7 @@ map.b
 #crop shoreline to buffers
 s_100m <- st_intersection(shoreline, b_100m) %>% mutate(buffer = "100m")
 s_500m <- st_intersection(shoreline, b_500m) %>% mutate(buffer = "500m")
-s_1km <- st_intersection(shoreline, b_1km) %>% mutate(buffer = "1km")
+s_1km <- st_intersection(shoreline, b_1km) %>% mutate(buffer = "1.2km")
 
 s_buffered <- rbind(s_100m, s_500m, s_1km) %>% 
   mutate(shore_length = st_length(geometry)) %>% 
@@ -70,36 +70,20 @@ s_buffered <- rbind(s_100m, s_500m, s_1km) %>%
 #crop armor data to buffers
 a_100m <- st_intersection(armor, b_100m) %>% mutate(buffer = "100m")
 a_500m <- st_intersection(armor, b_500m) %>% mutate(buffer = "500m")
-a_1km <- st_intersection(armor, b_1km) %>% mutate(buffer = "1km")
+a_1km <- st_intersection(armor, b_1km) %>% mutate(buffer = "1.2km")
 
 a_buffered <- rbind(a_100m, a_500m, a_1km) %>% 
-  mutate(armor_length.c = st_length(SHAPE)) %>%
+  mutate(armor_length = st_length(SHAPE)) %>% #can't use the SHAPE_length attribute anymore, because we cropped it!
   st_drop_geometry()
 
-#feet of armoring per site buffer extent
-a_buffered2 <- a_buffered %>% 
+#feet of armoring per buffer extent
+a_buffered <- a_buffered %>% 
   group_by(site, buffer) %>% 
-  summarize(armor_length = sum(SHAPE_Length)) 
-
-a_buffered3 <- a_buffered %>% 
-  group_by(site, buffer) %>% 
-  summarize(armor_length.c = sum(armor_length.c)) 
-
-a_buffered <- inner_join(a_buffered2, a_buffered3, ID = c("site, buffer"))
+  summarize(armor_length = sum(armor_length))
 
 #calculate percent armor
 perc_armor <- inner_join(s_buffered, a_buffered, ID = c("site", "buffer")) %>% 
-  mutate(perc_armor = (armor_length/shore_length)*100) %>% 
-  mutate(perc_armor.c = (armor_length.c/shore_length)*100) 
+  mutate(perc_armor = (armor_length/shore_length)*100) 
 
-
-ggplot() +
-  geom_sf(data = st_intersection(shoreline, Site)) +
-  geom_sf(data = st_intersection(armor, Site), color = "red") +
-  geom_sf(data = st_intersection(SOS_site_cents, Site), color = "black") +
-  geom_sf(data = st_intersection(b_100m, Site), fill = NA, color = "blue") +
-  #geom_sf(data = a_buffered[1,], color = "green") + 
-  #geom_sf(data = a_buffered[2,], color = "purple") +
-  geom_sf(data = s_buffered[1,], color = "orange")  
   
 
