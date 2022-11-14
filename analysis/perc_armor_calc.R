@@ -48,7 +48,7 @@ b_500m <- st_buffer(SOS_site_cents, 1640.42)
 b_1km <- st_buffer(SOS_site_cents, 3937.01) #3280.84ft in 1km, so this is actually 1.2km to capture the armoring at COR
 
 #look at just one site to make sure everything is working  
-Site <- SOS_sites %>% filter(site == "Dockton") %>% st_buffer(2500)
+Site <- SOS_sites %>% filter(site == "Seahurst") %>% st_buffer(5000)
 
 #map it with buffers!
 map.b <- ggplot() +
