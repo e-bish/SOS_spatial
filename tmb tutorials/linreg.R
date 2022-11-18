@@ -1,7 +1,7 @@
 library(TMB)
 
-compile("linreg.cpp")
-dyn.load(dynlib("linreg"))
+compile("tmb/linreg.cpp")
+dyn.load(dynlib("tmb/linreg"))
 
 set.seed(123)
 

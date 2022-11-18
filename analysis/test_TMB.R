@@ -57,8 +57,8 @@ params <- list(B = matrix(0, nrow = nsites, ncol = 2),
 )
 
 
-compile("tmb/linreg.cpp")
-dyn.load(dynlib("tmb/linreg"))
+compile("tmb/Timlinreg.cpp")
+dyn.load(dynlib("tmb/Timlinreg"))
 
 model <-
   MakeADFun(

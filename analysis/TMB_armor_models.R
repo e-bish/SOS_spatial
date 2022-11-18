@@ -1,5 +1,9 @@
 require(TMB)
 
+chinook <- net_list[[1]] %>% dplyr::select(-rest_yr)
+
+chinook.mm <- chinook %>% model.matrix(total)
+
 ### First run - no random effects at all ####
 
 DATA_VECTOR(y);
