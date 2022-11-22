@@ -1,42 +1,21 @@
 require(TMB)
 
-chinook <- net_list[[1]] %>% dplyr::select(-rest_yr)
-
-chinook.mm <- chinook %>% model.matrix(total)
-
-### First run - no random effects at all ####
-
-DATA_VECTOR(y);
-DATA_VECTOR(x);
+chinook <- net_list[[1]] %>% 
+  mutate(logyday = log(yday)) %>% 
+  dplyr::select(-c(year, month, yday, species, rest_yr, X500m, X1.2km))
 
 
-data <- list(n = ndata,
-             nsites = nsites,
-             X = as.matrix(X),
-             y = thedata$y,
-             Z = as.matrix(Z)
-)
-params <- list(B = matrix(0, nrow = nsites, ncol = 2),
-               bbar = 0,
-               ubar = 0,
-               logsigma =0,
-               logsigma_re = c(0,0)
-)
+### First run - only continuous variables and no random effects at all ####
+data <- model.matrix(~ -1 + total + logyday + X100m, chinook) %>% as_tibble() %>% as.list()
+parameters <- list(b0=0, b1=0, b2=0, logSigma=0)
 
+obj <- MakeADFun(data, parameters, DLL="tmb/amod")
+obj$hessian <- TRUE
 
-compile("tmb/linreg.cpp")
-dyn.load(dynlib("tmb/linreg"))
+opt <- do.call("optim", obj)
+opt
 
-model <-
-  MakeADFun(
-    data = data,
-    parameters = parameters,
-    DLL = "linreg")
-#,
-#   random = "B"
-#  )
-fit <- nlminb(model$par, model$fn, model$gr)
+opt$hessian ## <-- FD hessian from optim
+obj$he()    ## <-- Analytical hessian
 
-
-library(TMB)
-runExample(all=TRUE)
+sdreport(obj)
