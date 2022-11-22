@@ -25,7 +25,7 @@ Type objective_function<Type>::operator() ()
   //negative log likelihood
   for(int i = 0; i < n; i++) { 
     yfit(i) = b0 + b1 * logyday(i) + b2 * X100m(i);
-    neglogL += -dnbinom2(y(i), yfit(i), var, true);
+    neglogL -= sum(dnbinom2(y(i), yfit(i), var, true));
   }
   
   //stuff to report 
