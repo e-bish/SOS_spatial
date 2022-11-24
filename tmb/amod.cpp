@@ -10,7 +10,6 @@ Type objective_function<Type>::operator() ()
   int n = y.size();
   
   //specify parameters
-  PARAMETER(b0);
   PARAMETER(b1);
   PARAMETER(b2);
   PARAMETER(log_var);
@@ -22,13 +21,14 @@ Type objective_function<Type>::operator() ()
 
   //negative log likelihood
   for(int i = 0; i < n; i++) { 
-    mu(i) = b0 + b1*x(i) + b2*z(i);
-    neglogL += -dnbinom2(y(i), mu(i), var, true);
+    mu(i) = exp(b1*x(i) + b2*z(i));
+    neglogL -= dnbinom2(y(i), mu(i), mu(i)*(1.0+var), true);
   }
   
   //stuff to report 
   return neglogL;
   ADREPORT(var);
+  ADREPORT(mu);
 }
 
 
