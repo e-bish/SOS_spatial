@@ -39,9 +39,6 @@ thedata$y <- X %*% b + Z %*% u + epsilon
 
 ### First run - no random effects at all ####
 
-DATA_VECTOR(y);
-DATA_VECTOR(x);
-
 
 data <- list(n = ndata,
              nsites =nsites,
@@ -76,7 +73,6 @@ data = list(y = thedata$y,
 parameters = list(b0 = 0,
                   b1 = 0,
                   logsigma = 0)
-
 
 data <- list(n = ndata,
              nsites =nsites,
