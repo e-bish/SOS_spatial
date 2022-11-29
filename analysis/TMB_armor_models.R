@@ -10,6 +10,7 @@ chinook <- read_csv(chinook) %>%
   na.omit(chinook)
 
 #set parameters to simulate data and create data matrix
+set.seed(1234)
 b0 <- 0.4
 b1 <- 1
 b2 <- -0.25
@@ -69,7 +70,7 @@ data <- list(y = fake.y,
              Z = Z)
 
 #set initial values for parameters
-parameters <- list(beta = rep(0, times = 3), 
+parameters <- list(beta = rep(0, times = nrow(beta)), 
                    gamma = rep(0, times = ncol(Z)),
                    log_var = 0) 
 
@@ -86,7 +87,7 @@ fit_ran <- nlminb(model_ran$par, model_ran$fn, model_ran$gr)
 best_ran <- model_ran$env$last.par.best
 print(best_ran)
 rep_ran <- sdreport(model_ran)
-print(summary(rep))
+print(summary(rep_ran))
 
 ################################################################################
 ###################### add other fixed effects #################################
@@ -95,3 +96,41 @@ b4 <- 0.1
 b5 <- 0.3
 beta <- matrix(c(b0, b1, b2, b3, b4, b5), nrow = 6, ncol = 1)
 X2 <- model.matrix(~ scale(logyday) + scale(X100m) + ipa + veg, data = chinook)
+
+#create model matrix for the random effect (site)
+Z <- model.matrix( ~ -1 + site, data = chinook)
+
+#means of site intercepts
+gamma <- rnorm(n = ncol(Z), mean = 0, sd = 1)
+
+#matrix algebra!
+logmu <- X2 %*% beta + Z %*% gamma #fixed effects + random effect
+
+#simulate fish counts with a random site effect
+fake.y <- rnbinom(nrow(X2), mu = exp(logmu), size = 4)
+
+#gather data
+data <- list(y = fake.y,
+             X = X2,
+             Z = Z)
+
+#set initial values for parameters
+parameters <- list(beta = rep(0, times = nrow(beta)), 
+                   gamma = rep(0, times = ncol(Z)),
+                   log_var = 0) 
+
+#call the model
+compile("tmb/amod_ran.cpp") 
+dyn.load(dynlib("tmb/amod_ran"))
+
+model_fullran <- MakeADFun(data, parameters, random = "gamma", DLL="amod_ran", hessian=T)
+
+#Fit model
+fit_fullran <- nlminb(model_fullran$par, model_fullran$fn, model_fullran$gr)
+
+#Extract parameter estimates
+best_fullran <- model_fullran$env$last.par.best
+print(best_fullran)
+rep_fullran <- sdreport(model_fullran)
+print(summary(rep_fullran))
+
