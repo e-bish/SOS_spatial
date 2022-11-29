@@ -10,14 +10,14 @@ Type objective_function<Type>::operator() ()
   int n = y.size();
   
   //specify parameters
-  PARAMETER_VECTOR(beta);
-  PARAMETER_MATRIX(gamma);
+  PARAMETER_VECTOR(beta); // fixed effect coefficients
+  PARAMETER_VECTOR(gamma); // random effect coefficients
   PARAMETER(log_var);
   
   //create objects
   vector<Type> mu(n); 
   vector<Type> logmu(n); 
-  Type var=exp(log_var);
+  Type var = exp(log_var);
   Type neglogL = 0.0; //initial starting value for neg log likelihood
   
   logmu = X * beta + Z * gamma;

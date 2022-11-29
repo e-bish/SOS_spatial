@@ -9,24 +9,31 @@ chinook <- read_csv(chinook) %>%
   mutate(logyday = log(yday)) %>% 
   na.omit(chinook)
 
+#set parameters to simulate data and create data matrix
 b0 <- 0.4
 b1 <- 1
 b2 <- -0.25
+beta <- matrix(c(b0, b1, b2), nrow = 3, ncol = 1)
 X <- model.matrix(~ scale(logyday) + scale(X100m), data = chinook)
 
-logmu <- X %*% c(b0, b1, b2)
+################################################################################
+######## start with only two continuous variables and no random effects ########
+
+#matrix algebra!
+logmu <- X %*% beta
 
 #simulate fish counts
 fake.y <- rnbinom(nrow(X), mu = exp(logmu), size = 4)
 
-################################################################################
-######## start with only two continuous variables and no random effects ########
+#gather data
 data <- list(y = fake.y,
              X = X)
 
+#set initial values for parameters
 parameters <- list(beta = rep(0,3), 
                    log_var = 0) 
 
+#call the model
 compile("tmb/amod.cpp") #zero means it worked
 dyn.load(dynlib("tmb/amod"))
 
@@ -44,29 +51,29 @@ print(summary(rep))
 ################################################################################
 ######################### add random effect ####################################
 
-# create model matrix for the random effect (site)
+#create model matrix for the random effect (site)
 Z <- model.matrix( ~ -1 + site, data = chinook)
 
-# mean of site intercepts
+#means of site intercepts
 gamma <- rnorm(n = ncol(Z), mean = 0, sd = 1)
 
-#beta has to be a matrix
-beta <- matrix(c(b0, b1, b2), nrow = 3, ncol =1)
-
 #matrix algebra!
-logmu <- X %*% beta + Z %*% gamma
+logmu <- X %*% beta + Z %*% gamma #fixed effects + random effect
 
-#simulate fish counts
+#simulate fish counts with a random site effect
 fake.y <- rnbinom(nrow(X), mu = exp(logmu), size = 4)
 
+#gather data
 data <- list(y = fake.y,
              X = X,
              Z = Z)
 
-parameters <- list(beta = rep(0,3), 
-                   gamma = rep(0, ncol(Z)),
+#set initial values for parameters
+parameters <- list(beta = rep(0, times = 3), 
+                   gamma = rep(0, times = ncol(Z)),
                    log_var = 0) 
 
+#call the model
 compile("tmb/amod_ran.cpp") 
 dyn.load(dynlib("tmb/amod_ran"))
 
@@ -81,6 +88,10 @@ print(best_ran)
 rep_ran <- sdreport(model_ran)
 print(summary(rep))
 
-
-
-
+################################################################################
+###################### add other fixed effects #################################
+b3 <- 0.25
+b4 <- 0.1
+b5 <- 0.3
+beta <- matrix(c(b0, b1, b2, b3, b4, b5), nrow = 6, ncol = 1)
+X2 <- model.matrix(~ scale(logyday) + scale(X100m) + ipa + veg, data = chinook)
