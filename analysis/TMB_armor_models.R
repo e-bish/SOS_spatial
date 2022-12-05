@@ -142,6 +142,8 @@ l_nat <- 0 #natural
 l_arm <- -1 #armored
 l_rest <- 0.5 #restored
 lambda <- matrix(c(l_nat, l_arm, l_rest), nrow = 3, ncol = 1)
+
+#create model matrix for regular fixed effects
 X2 <- model.matrix(~ scale(logyday) + scale(X100m) + veg, data = chinook)
 
 #create model matrix for the ipa
@@ -172,16 +174,16 @@ parameters <- list(beta = rep(0, times = nrow(beta)),
                    log_var = 0) 
 
 #call the model
-compile("tmb/amod_ran.cpp") 
-dyn.load(dynlib("tmb/amod_ran"))
+compile("tmb/amod_ran_age.cpp") 
+dyn.load(dynlib("tmb/amod_ran_age"))
 
-model_fullran <- MakeADFun(data, parameters, random = "gamma", DLL="amod_ran", hessian=T)
+model_age <- MakeADFun(data, parameters, random = "gamma", DLL="amod_ran_age", hessian=T)
 
 #Fit model
-fit_fullran <- nlminb(model_fullran$par, model_fullran$fn, model_fullran$gr)
+fit_age <- nlminb(model_age$par, model_age$fn, model_age$gr)
 
 #Extract parameter estimates
-best_fullran <- model_fullran$env$last.par.best
-print(best_fullran)
-rep_fullran <- sdreport(model_fullran)
-print(summary(rep_fullran))
+best_age <- model_age$env$last.par.best
+print(best_age)
+rep_age <- sdreport(model_age)
+print(summary(rep_age))
