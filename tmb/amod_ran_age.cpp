@@ -4,32 +4,42 @@ template<class Type>
 Type objective_function<Type>::operator() ()
 {
   //specify data
-  DATA_VECTOR(y);
-  DATA_MATRIX(X);
-  DATA_MATRIX(Z);
-  DATA_MATRIX(L);
+  DATA_VECTOR(y); //fish counts
+  DATA_MATRIX(X); //fixed effects data matrix
+  DATA_MATRIX(Z); //random effects (site) data matrix
+  DATA_MATRIX(L); //shoreline type data matrix
+  DATA_VECTOR(a); //restoration age
   int n = y.size();
   
   //specify parameters
-  PARAMETER_VECTOR(beta); // fixed effect coefficients
-  PARAMETER_VECTOR(gamma); // random effect coefficients
-  PARAMETER_VECTOR(lambda); // effects of shoreline type
-  //PARAMETER_VECTOR(log_b);
-  PARAMETER(log_var);
+  PARAMETER_VECTOR(beta); //fixed effect coefficients
+  PARAMETER_VECTOR(gamma); //random effect coefficients
+  PARAMETER_VECTOR(lambda); //effects of shoreline type
+  PARAMETER_VECTOR(log_b); //effect of restoration age
+  PARAMETER(log_var); //variance
   
   //create objects
+  //lambda(0) = lambda_nat;
+  //lambda(1) = lambda_arm;
   vector<Type> mu(n); 
   vector<Type> logmu(n); 
-  //Type b = exp(log_b);
+  Type b = exp(log_b);
   Type var = exp(log_var);
   Type neglogL = 0.0; //initial starting value for neg log likelihood
   
-  //objective function
-  logmu = X * beta + Z * gamma + L * lambda;
-  
   //negative log likelihood
   for(int i = 0; i < n; i++) { 
+    
+    //objective function
+    logmu(i) = X(i) * beta + Z(i) * gamma + L(i) * lambda;
+    
+    //lambda_rest is a function of lambda_arm and restoration age
+    lambda(2) = lambda(1)*exp(-b*a(i));
+    
+    //mean mu for each row
     mu(i) = exp(logmu(i));
+    
+    //minimize
     neglogL -= dnbinom2(y(i), mu(i), mu(i)*(1.0+var), true);
   }
   

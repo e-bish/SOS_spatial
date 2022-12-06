@@ -91,9 +91,9 @@ X <- model.matrix(~ scale(logyday) + scale(X100m), data = chinook)
 # 
 # ################################################################################
 # ###################### add other fixed effects #################################
-# b3 <- 0.25
-# b4 <- 0.1
-# b5 <- 0.3
+# b3 <- 0.25 #ipaNatural
+# b4 <- 0.1 #ipaRestored
+# b5 <- 0.3 #VegPresent
 # beta <- matrix(c(b0, b1, b2, b3, b4, b5), nrow = 6, ncol = 1)
 # X2 <- model.matrix(~ scale(logyday) + scale(X100m) + ipa + veg, data = chinook)
 # 
@@ -115,12 +115,12 @@ X <- model.matrix(~ scale(logyday) + scale(X100m), data = chinook)
 #              Z = Z)
 # 
 # #set initial values for parameters
-# parameters <- list(beta = rep(0, times = nrow(beta)), 
+# parameters <- list(beta = rep(0, times = nrow(beta)),
 #                    gamma = rep(0, times = ncol(Z)),
-#                    log_var = 0) 
+#                    log_var = 0)
 # 
 # #call the model
-# compile("tmb/amod_ran.cpp") 
+# compile("tmb/amod_ran.cpp")
 # dyn.load(dynlib("tmb/amod_ran"))
 # 
 # model_fullran <- MakeADFun(data, parameters, random = "gamma", DLL="amod_ran", hessian=T)
@@ -136,18 +136,11 @@ X <- model.matrix(~ scale(logyday) + scale(X100m), data = chinook)
 
 ################################################################################
 ##################### add fancy code for restoration age #######################
-b3 <- 0.25 #veg
-beta <- matrix(c(b0, b1, b2, b3), nrow = 4, ncol = 1)
-l_nat <- 0 #natural
-l_arm <- -1 #armored
-l_rest <- 0.5 #restored
-lambda <- matrix(c(l_nat, l_arm, l_rest), nrow = 3, ncol = 1)
+b3 <- 0.25 #vegPresent
+beta <- matrix(c(b0, b1, b2, b3), nrow = 4, ncol = 1) 
 
 #create model matrix for regular fixed effects
 X2 <- model.matrix(~ scale(logyday) + scale(X100m) + veg, data = chinook)
-
-#create model matrix for the ipa
-L <- model.matrix(~ -1 + ipa, data = chinook)
 
 #create model matrix for the random effect (site)
 Z <- model.matrix( ~ -1 + site, data = chinook)
@@ -155,22 +148,39 @@ Z <- model.matrix( ~ -1 + site, data = chinook)
 #means of site intercepts
 gamma <- rnorm(n = ncol(Z), mean = 0, sd = 1)
 
-#matrix algebra!
-logmu <- X2 %*% beta + Z %*% gamma + L %*% lambda #fixed effects + random effect + fancy code
+#create model matrix for the ipa
+L <- model.matrix(~ -1 + ipa, data = chinook)
 
-#simulate fish counts with a random site effect
+#simulate effect of restoration age
+l_nat <- 0 #natural
+l_arm <- -1 #armored
+lambda <- matrix(c(l_nat, l_arm), nrow = 2, ncol = 1)
+logb <- 0.5
+a <- chinook$rest_age
+l_rest <- l_arm*exp(-logb*a) #restored
+
+# plot <- data.frame(a, l_rest)
+# ggplot(plot, aes(x = a, y = l_rest)) +
+#   geom_point()
+
+#matrix algebra!
+logmu <- X2 %*% beta + Z %*% gamma + L[,1:2] %*% lambda + L[,3] * l_rest #fixed effects + random effect + fancy code
+
+#simulate fish counts with a random site effect and effect of time since restoration
 fake.y <- rnbinom(nrow(X2), mu = exp(logmu), size = 4)
 
 #gather data
 data <- list(y = fake.y,
              X = X2,
              Z = Z,
-             L = L)
+             L = L,
+             a = a)
 
 #set initial values for parameters
 parameters <- list(beta = rep(0, times = nrow(beta)), 
                    gamma = rep(0, times = ncol(Z)),
                    lambda = rep(0, times = ncol(L)),
+                   log_b = 0,
                    log_var = 0) 
 
 #call the model
