@@ -26,6 +26,8 @@ library(googledrive)
 net_import <- drive_get("https://docs.google.com/spreadsheets/d/1OhsndJNLAlHxT0TTHp7dmgbKgPZ7dgd-xNnE-aAxLdc/edit#gid=0") %>%
   read_sheet( ) 
 
+#write_csv(net_import, here("data", "raw_import", "raw.18.19.csv"))
+
 net_import <-net_import %>%
   separate(date, into = c("year","month", "day"), sep = "-") %>%
   mutate(month = str_pad(month, 2, side = c("left"), pad = "0")) %>%
@@ -56,6 +58,8 @@ net_import2_june <- drive_get("june_blitz_2021") %>%
 
 net_import2 <- rbind(net_import2, net_import2_june)
 
+#write_csv(net_import2, here("data", "raw_import", "raw.21.csv"))
+
 net_2021 <- net_import2 %>%
   mutate(month = str_pad(month, width = 2, pad = "0")) %>% 
   mutate(day = str_pad(day, width = 2, pad = "0")) %>% 
@@ -72,6 +76,8 @@ write_csv(net_2021, here("data","net_2021.csv"))
 ## 2022 data
 net_import3 <- drive_get("lampara_net_data_22") %>%
   read_sheet( ) 
+
+#write_csv(net_import3, here("data", "raw_import", "raw.22.csv"))
 
 net_2022 <- net_import3 %>%
   mutate(month = str_pad(month, width = 2, pad = "0")) %>% 
