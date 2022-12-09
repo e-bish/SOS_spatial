@@ -14,13 +14,15 @@ Type objective_function<Type>::operator() ()
   //specify parameters
   PARAMETER_VECTOR(beta); //fixed effect coefficients
   PARAMETER_VECTOR(gamma); //random effect coefficients
-  PARAMETER_VECTOR(lambda); //effects of shoreline type
-  PARAMETER_VECTOR(log_b); //effect of restoration age
+  PARAMETER(lambda_nat); //effects of natural shoreline
+  PARAMETER(lambda_arm); //effects of armored shoreline
+  PARAMETER(log_b); //effect of restoration age
   PARAMETER(log_var); //variance
   
   //create objects
-  //lambda(0) = lambda_nat;
-  //lambda(1) = lambda_arm;
+  vector<Type> lambda(3);
+  lambda(0) = lambda_nat;
+  lambda(1) = lambda_arm;
   vector<Type> mu(n); 
   vector<Type> logmu(n); 
   Type b = exp(log_b);
@@ -30,11 +32,11 @@ Type objective_function<Type>::operator() ()
   //negative log likelihood
   for(int i = 0; i < n; i++) { 
     
-    //objective function
-    logmu(i) = X(i) * beta + Z(i) * gamma + L(i) * lambda;
-    
     //lambda_rest is a function of lambda_arm and restoration age
-    lambda(2) = lambda(1)*exp(-b*a(i));
+    lambda(2) = lambda(1)*exp(-b*a(i)); 
+    
+    //objective function
+    logmu(i) = X(i) * beta + Z(i) * gamma + L(i) * lambda(i);
     
     //mean mu for each row
     mu(i) = exp(logmu(i));
@@ -47,6 +49,7 @@ Type objective_function<Type>::operator() ()
   return neglogL;
   ADREPORT(var);
   ADREPORT(mu);
+  ADREPORT(b);
 }
 
 

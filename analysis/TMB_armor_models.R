@@ -179,7 +179,8 @@ data <- list(y = fake.y,
 #set initial values for parameters
 parameters <- list(beta = rep(0, times = nrow(beta)), 
                    gamma = rep(0, times = ncol(Z)),
-                   lambda = rep(0, times = ncol(L)),
+                   lambda_nat = 0,
+                   lambda_arm = 0,
                    log_b = 0,
                    log_var = 0) 
 
