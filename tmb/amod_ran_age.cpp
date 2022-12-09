@@ -21,8 +21,8 @@ Type objective_function<Type>::operator() ()
   
   //create objects
   vector<Type> lambda(3);
-  lambda(0) = lambda_nat;
-  lambda(1) = lambda_arm;
+  lambda[0] = lambda_nat;
+  lambda[1] = lambda_arm;
   vector<Type> mu(n); 
   vector<Type> logmu(n); 
   Type b = exp(log_b);
@@ -33,16 +33,16 @@ Type objective_function<Type>::operator() ()
   for(int i = 0; i < n; i++) { 
     
     //lambda_rest is a function of lambda_arm and restoration age
-    lambda(2) = lambda(1)*exp(-b*a(i)); 
+    lambda[2] = lambda[1]*exp(-b*a[i]); 
     
     //objective function
-    logmu(i) = X(i) * beta + Z(i) * gamma + L(i) * lambda(i);
+    logmu[i] = X[i] * beta + Z[i] * gamma + L[i] * lambda[i];
     
     //mean mu for each row
-    mu(i) = exp(logmu(i));
+    mu[i] = exp(logmu[i]);
     
     //minimize
-    neglogL -= dnbinom2(y(i), mu(i), mu(i)*(1.0+var), true);
+    neglogL -= dnbinom2(y[i], mu[i], mu[i]*(1.0+var), true);
   }
   
   //stuff to report 

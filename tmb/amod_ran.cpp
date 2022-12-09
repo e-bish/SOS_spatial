@@ -25,8 +25,8 @@ Type objective_function<Type>::operator() ()
   
   //negative log likelihood
   for(int i = 0; i < n; i++) { 
-    mu(i) = exp(logmu(i));
-    neglogL -= dnbinom2(y(i), mu(i), mu(i)*(1.0+var), true);
+    mu[i] = exp(logmu[i]);
+    neglogL -= dnbinom2(y[i], mu[i], mu[i]*(1.0+var), true);
   }
   
   //stuff to report 

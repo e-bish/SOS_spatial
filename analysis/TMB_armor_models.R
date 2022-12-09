@@ -31,8 +31,8 @@ X <- model.matrix(~ scale(logyday) + scale(X100m), data = chinook)
 #              X = X)
 # 
 # #set initial values for parameters
-# parameters <- list(beta = rep(0,3), 
-#                    log_var = 0) 
+# parameters <- list(beta = rep(0,3),
+#                    log_var = 0)
 # 
 # #call the model
 # compile("tmb/amod.cpp") #zero means it worked
@@ -137,7 +137,7 @@ X <- model.matrix(~ scale(logyday) + scale(X100m), data = chinook)
 ################################################################################
 ##################### add fancy code for restoration age #######################
 b3 <- 0.25 #vegPresent
-beta <- matrix(c(b0, b1, b2, b3), nrow = 4, ncol = 1) 
+beta <-c(b0, b1, b2, b3) 
 
 #create model matrix for regular fixed effects
 X2 <- model.matrix(~ scale(logyday) + scale(X100m) + veg, data = chinook)
@@ -152,19 +152,22 @@ gamma <- rnorm(n = ncol(Z), mean = 0, sd = 1)
 L <- model.matrix(~ -1 + ipa, data = chinook)
 
 #simulate effect of restoration age
-l_nat <- 0 #natural
-l_arm <- -1 #armored
-lambda <- matrix(c(l_nat, l_arm), nrow = 2, ncol = 1)
+lambda_nat <- 0 #natural
+lambda_arm <- -1 #armored
 logb <- 0.5
 a <- chinook$rest_age
-l_rest <- l_arm*exp(-logb*a) #restored
+lambda_rest <- lambda_arm*exp(-logb*a) #restored
+
+lambda <- matrix(c(rep(lambda_nat, times = length(lambda_rest)), ##this is a test, isnt working
+                   rep(lambda_arm, times = length(lambda_rest)),
+                   lambda_rest), nrow = 3, ncol = length(lambda_rest))
 
 # plot <- data.frame(a, l_rest)
 # ggplot(plot, aes(x = a, y = l_rest)) +
 #   geom_point()
 
 #matrix algebra!
-logmu <- X2 %*% beta + Z %*% gamma + L[,1:2] %*% lambda + L[,3] * l_rest #fixed effects + random effect + fancy code
+logmu <- X2 %*% beta + Z %*% gamma + L[,1:2] %*% lambda + L[,3] * lambda_rest #fixed effects + random effect + fancy code
 
 #simulate fish counts with a random site effect and effect of time since restoration
 fake.y <- rnbinom(nrow(X2), mu = exp(logmu), size = 4)
