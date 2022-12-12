@@ -158,9 +158,7 @@ logb <- 0.5
 a <- chinook$rest_age
 lambda_rest <- lambda_arm*exp(-logb*a) #restored
 
-lambda <- matrix(c(rep(lambda_nat, times = length(lambda_rest)), ##this is a test, isnt working
-                   rep(lambda_arm, times = length(lambda_rest)),
-                   lambda_rest), nrow = 3, ncol = length(lambda_rest))
+lambda <- c(lambda_nat, lambda_arm)
 
 # plot <- data.frame(a, l_rest)
 # ggplot(plot, aes(x = a, y = l_rest)) +
@@ -180,7 +178,7 @@ data <- list(y = fake.y,
              a = a)
 
 #set initial values for parameters
-parameters <- list(beta = rep(0, times = nrow(beta)), 
+parameters <- list(beta = rep(0, times = length(beta)), 
                    gamma = rep(0, times = ncol(Z)),
                    lambda_nat = 0,
                    lambda_arm = 0,
