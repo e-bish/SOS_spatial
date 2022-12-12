@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE metadata SYSTEM "http://www.fgdc.gov/metadata/fgdc-std-001-1998.dtd">
+<metadata>
+	<idinfo>
+		<citation>
+			<citeinfo>
+				<origin>Puget Sound Nearshore Partnership (http://www.pugetsoundnearshore.org) led by the Washington Department of Fish &amp; Wildlife and the U.S. Army Corps of Engineers in collaboration with the Salmon and Steelhead Habitat Inventory and Assessment Program (SSHIAP) of the Northwest Indian Fisheries Commission and Point No Point Treaty Council (NWIFC/PNPTC). Anchor Environmental provided contractual professional services.</origin>
+				<pubdate>2010</pubdate>
+				<title>Geographic Scale Units (GSUs)_PSNERP_3.0</title>
+				<geoform>vector digital data</geoform>
+			</citeinfo>
+		</citation>
+		<descript>
+			<abstract>This polygon dataset contains multiple scales of nested spatial units that form the assessment units for the Puget Sound Nearshore Ecosystem Restoration Project (PSNERP) Change Analysis.  This Geographic Scale Units (GSUs) spatial organizational structure allows for comparison of historic (late 1800s) and current (circa 2000) watershed conditions at multiple analysis scales. The GSUs nested spatial units area delineated based on watershed topography, drift cells, and major rivers.  The basic GSUs over which change analysis metrics will be summarized are the Drainage Unit (DU), the Shoreline Accounting Unit (AU), the Shoreline Process Unit (SPU), Delta Accounting Unit (DAU), Delta Process Unit, and the Zone Unit (ZU).</abstract>
+			<purpose>This data was created for use within the Puget Sound Nearshore Ecosystem Restoration Project (PSNERP) Change Analysis to provide the spatial organizational units that will form the basis of the comparison of historic versus current conditions.</purpose>
+			<supplinf>The Puget Sound Nearshore Ecosystem Restoration Project (PSNERP) was formally initiated as a General Investigation (GI) Feasibility Study in September 2001 through a cost-share agreement between the U.S. Army Corps of Engineers and the State of Washington, represented by the Washington Department of Fish and Wildlife. This agreement describes our joint interests and responsibilities to complete a feasibility study to "...evaluate significant ecosystem degradation in the Puget Sound Basin; to formulate, evaluate, and screen potential solutions to these problems; and to recommend a series of actions and projects that have a federal interest and are supported by a local entity willing to provide the necessary items of local cooperation." The second phase of PSNERP is called the Feasibility Phase and seeks to accomplish three primary objectives: 
+
+1) Identify and evaluate significant nearshore ecosystem degradation of Puget Sound
+
+2) Formulate, evaluate, and screen potential solutions to these problems
+
+3) Recommend a series of actions and projects
+
+
+
+The geographical domain of the study is defined as the area where a response to all actions is expected to occur and will extend downstream from the upstream limits of tidal influence of any river or stream entering Puget Sound, to the western limit of the Strait of Juan de Fuca.  It includes all of Puget Sound and the Strait of Georgia north to the United States/Canada border.  Within this region, it includes those adjacent uplands that directly affect nearshore processes, and encompassing intertidal and subtidal areas, extending seaward to the depth limits of the photic zone.
+
+The PSNERP approach includes several technical studies necessary to complete an assessment of the historic and current conditions through a Change Analysis of the Puget Sound nearshore. These studies will also attempt to forecast future conditions of the nearshore with and without various restoration and protection measures.
+
+Change Analysis is defined as a measurement of changes between historic (pre-1900) and current conditions (circa 2000) of shoreline and estuarine landscape features.  A principle feature of these interdisciplinary studies is a spatial analysis framework of terrestrial and aquatic areas of nearshore ecosystems.  These studies, including the Change Analysis, will be part of a problem statement for the Feasibility Study entitled the Strategic Needs Assessment Report.
+
+Additional information on the project including existing reports can be found at www.pugetsoundnearshore.org.</supplinf>
+		</descript>
+		<timeperd>
+			<timeinfo>
+				<sngdate>
+					<caldate>2010</caldate>
+				</sngdate>
+			</timeinfo>
+			<current>publication date</current>
+		</timeperd>
+		<status>
+			<progress>Complete</progress>
+			<update>None planned</update>
+		</status>
+		<spdom>
+			<bounding>
+				<westbc>
+-122.755030</westbc>
+				<eastbc>
+-120.637672</eastbc>
+				<northbc>
+49.084392</northbc>
+				<southbc>
+47.335815</southbc>
+			</bounding>
+		</spdom>
+		<keywords>
+			<theme>
+				<themekt>REQUIRED: Reference to a formally registered thesaurus or a similar authoritative source of theme keywords.</themekt>
+				<themekey>Database Structure</themekey>
+				<themekey>Units of Analysis</themekey>
+				<themekey>Multiple Scales</themekey>
+				<themekey>User-defined  Spatial Units</themekey>
+				<themekey>Metrics</themekey>
+				<themekey>Tiers of Analysis</themekey>
+				<themekey>Sub-basin</themekey>
+				<themekey>Drainage Units</themekey>
+				<themekey>Accounting Units</themekey>
+				<themekey>Process Units</themekey>
+				<themekey>Zone Units</themekey>
+			</theme>
+			<place>
+				<placekey>Washington State</placekey>
+				<placekey>Puget Sound</placekey>
+			</place>
+			<stratum>
+				<stratkey>Shoreline</stratkey>
+				<stratkey>Nearshore</stratkey>
+				<stratkey>Ordinary High Water</stratkey>
+				<stratkey>Mean Lower Low Water</stratkey>
+				<stratkey>Beach</stratkey>
+				<stratkey>Intertidal</stratkey>
+			</stratum>
+			<temporal>
+			</temporal>
+		</keywords>
+		<accconst>none</accconst>
+		<useconst>none</useconst>
+		<ptcontac>
+			<cntinfo>
+				<cntorgp>
+					<cntorg>U.S. Army Corps of Engineers (Seattle District)</cntorg>
+					<cntper>Scott W. Campbell</cntper>
+				</cntorgp>
+				<cntpos>physical scientist</cntpos>
+				<cntaddr>
+					<addrtype>mailing and physical address</addrtype>
+					<address>4735 East Marginal Way South</address>
+					<city>Seattle</city>
+					<state>Washington</state>
+					<postal>98124</postal>
+					<country>U.S.</country>
+				</cntaddr>
+				<cntinst>email scott.w.campbell@usace.army.mil for instructions</cntinst>
+			</cntinfo>
+		</ptcontac>
+		<browse>
+		</browse>
+		<datacred>Anchor Environmental with support from PSNERP</datacred>
+		<secinfo>
+			<secsys>unclassified</secsys>
+			<secclass>Unclassified</secclass>
+			<sechandl>unclassified</sechandl>
+		</secinfo>
+		<native>Microsoft Windows XP Version 5.1 (Build 2600) Service Pack 3; ESRI ArcCatalog 9.2.5.1450</native>
+	</idinfo>
+	<dataqual><complete>Please see "Geospatial Methodology Used in the PSNERP Comprehensive Change Analysis of Puget Sound" document.</complete>
+		<attracc>
+			<attraccr>For more detailed information please see "Geospatial Methodology Used in the PSNERP Comprehensive Change Analysis of Puget Sound" document.</attraccr>
+			<qattracc>
+			</qattracc>
+		</attracc>
+		<posacc>
+			<horizpa>
+			</horizpa>
+			<vertacc>
+			</vertacc>
+		</posacc>
+		<lineage>
+			<srcinfo>
+				<srccite>
+					<citeinfo>
+					</citeinfo>
+				</srccite>
+				<srctime>
+					<timeinfo>
+						<sngdate>
+							<caldate>2001</caldate>
+						</sngdate>
+					</timeinfo>
+					<srccurr>publication date</srccurr>
+				</srctime>
+				<srccontr>U.S. Geological Survey
+
+Source: U.S. Geological Survey (USGS)
+
+Description: This is a general purpose Digital Elevation Model (DEM) of topography throughout the State of Washington.
+
+
+Natural Resources Canada
+
+Source: Government of Canada, Natural Resources Canada
+
+Description: This is a general purpose DEM of topography throughout western Canada.
+
+
+Washington Department of Ecology (Schwartz)
+
+Source: WDOE
+
+Description: This dataset is a digitized version of net shore-drift mapping conducted by approximately ten graduate students of Dr. Maurice Schwartz at Western Washington University. The mapping was conducted between the late 1970s and early 1980s.
+
+
+Coastal Geologic/U.S. Army Corps of Engineers
+
+Source: U.S. Army Corps of Engineers
+
+Description: The U.S. Army Corps of Engineers contracted Coastal Geologic Services to revise the WDOE drift cell dataset in the following ways:
+
+1. Fill in data gaps in areas mapped as UN (unidentified) or blank
+
+2. Correct data in areas where net shore-drift was mapped in regions where no net shore-drift occurs.
+
+3. Interpret historic net shore-drift for those areas characterized in WDOE based on current conditions caused by large anthropogenic alterations (e.g., jetties, dikes, and dredge/fill)
+
+For more detailed information please see "Geospatial Methodology Used in the PSNERP Comprehensive Change Analysis of Puget Sound" document.</srccontr>
+			</srcinfo>
+			<procstep>
+				<procdesc>1.  Generate a flow direction raster from USGS 10-meter DEM.  
+
+2.  Generate basins from the flow direction raster. 
+
+3.  Generate "forced watersheds" using the flow direction raster and the end points of the drift cells.
+
+4.  Export both the basin and watershed rasters as non-generalized polygons. 
+
+5.  Group the basins by drift cell line segments or portions of segments.  Where a basin overlaps more than one line segment, use the "forced watersheds," aerial imagery, hillshading, DNR hydrology, shoreline and any other information necessary to estimate the best place to divide that basin into portions representing the basin associated with that particular drift cell component.
+
+6.  Reclassify both the 2000 and 2005 Finlayson DEMs containing bathymetry using the range of -10 meters (-100 decimeters), with all other ranges reclassified as "NoData".  Convert both the 2000 and 2005 to polygons (non-generalized), which will be used to delineate a 10-meter-depth waterward boundary. Union the 2000 and 2005 polygon data with preference given to the newest (2005) data. (In the Rosario Strait and Bellingham Channel areas, the Finlayson DEMs have no bathymetry; this gap is filled with a DEM made from soundings taken primarily in the 1930s and 1940s. Again preference is always given to newest data.)
+
+7.  Dissolve the DU polygons, and use the dissolved area to erase areas of overlap from the polygons created by the union of the 2000/2005 bathymetry, and trim the bathymetry polygons to each analysis basin (e.g. Hood Canal).  What remains should be a polygon extending out in a waterward direction from the DU polygons. Merge this 10-meter-depth waterward boundary polygon with the DUs in each analysis basin.
+
+For more detailed information please see "Geospatial Methodology Used in the PSNERP Comprehensive Change Analysis of Puget Sound" document.</procdesc>
+				<proccont>
+					<cntinfo>
+						<cntperp>
+						</cntperp>
+					</cntinfo>
+				</proccont>
+			</procstep>
+			<procstep><procdesc Sync="TRUE">Metadata imported.</procdesc><srcused Sync="TRUE">Q:\Jobs\070202-01-PSNERP_Nearshore\Document\Metadata\FINAL_METADATA_3.0\fd_GSUs.xml</srcused><procdate Sync="TRUE">20100701</procdate><proctime Sync="TRUE">14415800</proctime></procstep></lineage>
+	</dataqual>
+	<spdoinfo>
+		<direct>Vector</direct>
+		<ptvctinf><esriterm Name="psnerp_oceanographic_subbasin_utm"><efeatyp Sync="TRUE">Simple</efeatyp><efeageom code="4" Sync="TRUE"></efeageom><esritopo Sync="TRUE">FALSE</esritopo><efeacnt Sync="TRUE">0</efeacnt><spindex Sync="TRUE">FALSE</spindex><linrefer Sync="TRUE">FALSE</linrefer></esriterm></ptvctinf></spdoinfo>
+	<spref>
+		<horizsys>
+			<planar>
+				<planci>
+					<plance>coordinate pair</plance>
+					<coordrep>
+						<absres>0.000100</absres>
+						<ordres>0.000100</ordres>
+					</coordrep>
+					<plandu>meters</plandu>
+				</planci>
+			</planar>
+			<geodetic>
+				<horizdn>North American Datum of 1983</horizdn>
+				<ellips>Geodetic Reference System 80</ellips>
+				<semiaxis>6378137.000000</semiaxis>
+				<denflat>298.257222</denflat>
+			</geodetic>
+		</horizsys>
+		<vertdef>
+			<altsys>
+				<altres>0.000100</altres>
+				<altenc>Explicit elevation coordinate included with horizontal coordinates</altenc>
+			</altsys>
+		</vertdef>
+	</spref>
+	<eainfo>
+		<detailed Name="psnerp_oceanographic_subbasin_utm">
+			<enttyp>
+				<enttypl>
+fd_GSUs</enttypl>
+				<enttypds>Geographic Scale Units used to organize metrics for queries across 4 tiers at multiple scales.  Four tiers of change will be measured: (1) shoreform transition, (2) shoreline modifications, (3) buffer modifications, and (4) drainage (watershed/catchment) area modifications.  The modifications will be reported in metrics on the level of Process Unit for both the shoreline and delta environments.</enttypds>
+				<enttypt Sync="TRUE">Feature Class</enttypt><enttypc Sync="TRUE">0</enttypc></enttyp>
+			<attr><attrlabl Sync="TRUE">FID</attrlabl><attalias Sync="TRUE">FID</attalias><attrtype Sync="TRUE">OID</attrtype><attwidth Sync="TRUE">4</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale><attrdef Sync="TRUE">Internal feature number.</attrdef><attrdefs Sync="TRUE">Esri</attrdefs><attrdomv><udom Sync="TRUE">Sequential unique whole numbers that are automatically generated.</udom></attrdomv></attr><attr>
+				<attrlabl>Shape</attrlabl>
+				<attrdef>Feature geometry.</attrdef>
+				<attrdomv>
+					<udom>Coordinates defining the features.</udom>
+				</attrdomv>
+				<attrdefs>Anchor Environmental</attrdefs><attalias Sync="TRUE">Shape</attalias><attrtype Sync="TRUE">Geometry</attrtype><attwidth Sync="TRUE">0</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>SUBBASIN</attrlabl>
+				<attrdef>Sub-basin Area</attrdef>
+				<attrdomv>
+					<edom><edomv>HC</edomv><edomvd>Hood Canal Sub-basin</edomvd></edom>
+					<edom><edomv>JF</edomv><edomvd>Strait of Juan de Fuca Sub-basin</edomvd></edom>
+					<edom><edomv>NC</edomv><edomvd>North Central Puget Sound Sub-basin</edomvd></edom>
+					<edom><edomv>SC</edomv><edomvd>South Central Puget Sound Sub-basin</edomvd></edom>
+					<edom><edomv>SJ</edomv><edomvd>San Juan Islands and Georgia Strait Sub-basin</edomvd></edom>
+					<edom><edomv>SP</edomv><edomvd>South Puget Sound Sub-basin</edomvd></edom>
+					<edom><edomv>WH</edomv><edomvd>Whidbey Sub-basin</edomvd></edom><edom><edomv>AA|BB</edomv><edomvd>Combined sub-basin codes separated by a pipe character (e.g., "HC|NC") means these areas are shared between two adjacent sub-basins. The first two-letter code refers to an entire sub-basin; the second two-letter code refers to the fraction of the adjacent sub-basin that shares areas with the first one.</edomvd></edom>
+				</attrdomv>
+				<attrdefs>Anchor Environmental</attrdefs><attalias Sync="TRUE">SUBBASIN</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">5</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+		</detailed>
+		<overview>
+			<eaover>For more detailed information please see "Geospatial Methodology Used in the PSNERP Comprehensive Change Analysis of Puget Sound" document.</eaover>
+		</overview>
+	</eainfo>
+	<distinfo>
+		<distrib>
+			<cntinfo>
+				<cntorgp>
+					<cntorg>U.S. Army Corps of Engineers (Seattle District)</cntorg>
+					<cntper>Scott W. Campbell</cntper>
+				</cntorgp>
+				<cntpos>physical scientist</cntpos>
+				<cntinst>email scott.w.campbell@usace.army.mil for instructions</cntinst>
+			</cntinfo>
+		</distrib>
+		<resdesc>Downloadable Data</resdesc>
+		<distliab>The Government furnishes this data and the recipient accepts and uses it with the express understanding that the United States Government makes no warranties, express or implied, concerning the accuracy, completeness, reliability, usability, or suitability for any particular purpose of the information and data furnished. The United States shall be under no liability whatsoever to any person by reason of any use made thereof. This data belongs to the Government. Therefore, the recipient further agrees not to represent this data to anyone as other than Government provided data. The recipient may not transfer this data to others without also transferring this disclaimer.</distliab>
+		<stdorder>
+			<digform>
+				<digtinfo>
+					<formname>ESRI Geodatabase</formname>
+				</digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka><networkr>http://www.nws.usace.army.mil/PublicMenu/Menu.cfm?sitename=psnerp&amp;pagename=Mainpage</networkr>
+							</networka>
+						</computer>
+						<accinstr>email scott.w.campbell@usace.army.mil for instructions</accinstr>
+					</onlinopt>
+					<offoptn>
+						<reccap>
+						</reccap>
+					</offoptn>
+				</digtopt>
+			</digform>
+			<fees>none</fees>
+			<ordering>email scott.w.campbell@usace.army.mil for instructions</ordering>
+			<turnarnd>ASAP</turnarnd>
+		</stdorder>
+		<custom>Stillaguamish River</custom>
+	</distinfo>
+	<metainfo>
+		<metd>20100624</metd>
+		<metc>
+			<cntinfo>
+				<cntperp>
+					<cntper>Scott W. Campbell</cntper>
+					<cntorg>U.S. Army Corps of Engineers (Seattle District)</cntorg></cntperp>
+				<cntaddr>
+					<addrtype>mailing and physical address</addrtype>
+					<city>Seattle</city>
+					<state>Washington</state>
+					<postal>98124</postal>
+					<address>4735 East Marginal Way South</address><country>U.S.</country></cntaddr>
+				<cntvoice>REQUIRED: The telephone number by which individuals can speak to the organization or individual.</cntvoice>
+				<cntinst>email scott.w.campbell@usace.army.mil for instructions</cntinst>
+				<cntpos>physical scientist</cntpos></cntinfo>
+		</metc>
+		<metstdn>FGDC Content Standards for Digital Geospatial Metadata</metstdn>
+		<metstdv>FGDC-STD-001-1998</metstdv>
+		<mettc>local time</mettc>
+		<metac>none</metac>
+		<metuc>none</metuc>
+		<metsi><metscs>Unclassified</metscs><metsc>Unclassified</metsc><metshd>email scott.w.campbell@usace.army.mil</metshd>
+			<metshd>email scott.w.campbell@usace.army.mil for instructions</metshd>
+		</metsi>
+		<metextns>
+			<onlink>http://www.esri.com/metadata/esriprof80.html</onlink>
+			<metprof>ESRI Metadata Profile</metprof>
+		</metextns>
+	</metainfo>
+	<Esri><ModDate>20220510</ModDate><ModTime>11382100</ModTime><Sync>FALSE</Sync><CreaDate>20220510</CreaDate><CreaTime>20545200</CreaTime><SyncOnce>FALSE</SyncOnce><DataProperties><itemProps><itemName Sync="TRUE">psnerp_oceanographic_subbasin_utm</itemName><imsContentType Sync="TRUE">002</imsContentType><itemSize Sync="TRUE">0.000</itemSize><itemLocation><linkage Sync="TRUE">file://\\vmware-host\Shared Folders\aifiles2\PSNERP\psnerp_oceanographic_subbasin_utm.shp</linkage><protocol Sync="TRUE">Local Area Network</protocol></itemLocation></itemProps><coordRef><type Sync="TRUE">Projected</type><geogcsn Sync="TRUE">GCS_North_American_1983</geogcsn><csUnits Sync="TRUE">Linear Unit: Meter (1.000000)</csUnits><projcsn Sync="TRUE">NAD_1983_UTM_Zone_10N</projcsn><peXml Sync="TRUE">&lt;ProjectedCoordinateSystem xsi:type='typens:ProjectedCoordinateSystem' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:typens='http://www.esri.com/schemas/ArcGIS/10.1'&gt;&lt;WKT&gt;PROJCS[&amp;quot;NAD_1983_UTM_Zone_10N&amp;quot;,GEOGCS[&amp;quot;GCS_North_American_1983&amp;quot;,DATUM[&amp;quot;D_North_American_1983&amp;quot;,SPHEROID[&amp;quot;GRS_1980&amp;quot;,6378137.0,298.257222101]],PRIMEM[&amp;quot;Greenwich&amp;quot;,0.0],UNIT[&amp;quot;Degree&amp;quot;,0.0174532925199433]],PROJECTION[&amp;quot;Transverse_Mercator&amp;quot;],PARAMETER[&amp;quot;False_Easting&amp;quot;,500000.0],PARAMETER[&amp;quot;False_Northing&amp;quot;,0.0],PARAMETER[&amp;quot;Central_Meridian&amp;quot;,-123.0],PARAMETER[&amp;quot;Scale_Factor&amp;quot;,0.9996],PARAMETER[&amp;quot;Latitude_Of_Origin&amp;quot;,0.0],UNIT[&amp;quot;Meter&amp;quot;,1.0],AUTHORITY[&amp;quot;EPSG&amp;quot;,26910]]&lt;/WKT&gt;&lt;XOrigin&gt;-5120900&lt;/XOrigin&gt;&lt;YOrigin&gt;-9998100&lt;/YOrigin&gt;&lt;XYScale&gt;450445547.3910538&lt;/XYScale&gt;&lt;ZOrigin&gt;-100000&lt;/ZOrigin&gt;&lt;ZScale&gt;10000&lt;/ZScale&gt;&lt;MOrigin&gt;-100000&lt;/MOrigin&gt;&lt;MScale&gt;10000&lt;/MScale&gt;&lt;XYTolerance&gt;0.001&lt;/XYTolerance&gt;&lt;ZTolerance&gt;0.001&lt;/ZTolerance&gt;&lt;MTolerance&gt;0.001&lt;/MTolerance&gt;&lt;HighPrecision&gt;true&lt;/HighPrecision&gt;&lt;WKID&gt;26910&lt;/WKID&gt;&lt;LatestWKID&gt;26910&lt;/LatestWKID&gt;&lt;/ProjectedCoordinateSystem&gt;</peXml></coordRef><lineage><Process ToolSource="c:\program files (x86)\arcgis\desktop10.1\ArcToolbox\Toolboxes\Data Management Tools.tbx\Dissolve" Date="20220510" Time="113905">Dissolve fd_GSUs Z:\aifiles2\PSNERP\psnerp_oceanographic_subbasin_utm.shp SUBBASIN # SINGLE_PART DISSOLVE_LINES</Process><Process ToolSource="c:\program files (x86)\arcgis\desktop10.1\ArcToolbox\Toolboxes\Data Management Tools.tbx\Project" Date="20220510" Time="205453">Project psnerp_oceanographic_subbasin_utm Z:\aifiles2\PSNERP\psnerp_oceanographic_subbasins_geo.shp GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433],METADATA['World',-180.0,-90.0,180.0,90.0,0.0,0.0174532925199433,0.0,1262]] WGS_1984_(ITRF00)_To_NAD_1983 PROJCS['NAD_1983_UTM_Zone_10N',GEOGCS['GCS_North_American_1983',DATUM['D_North_American_1983',SPHEROID['GRS_1980',6378137.0,298.257222101]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Transverse_Mercator'],PARAMETER['False_Easting',500000.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',-123.0],PARAMETER['Scale_Factor',0.9996],PARAMETER['Latitude_Of_Origin',0.0],UNIT['Meter',1.0]]</Process></lineage></DataProperties><SyncDate>20220510</SyncDate><SyncTime>11382100</SyncTime><ArcGISFormat>1.0</ArcGISFormat><ArcGISstyle>FGDC CSDGM Metadata</ArcGISstyle></Esri><mdDateSt Sync="TRUE">20220510</mdDateSt><dataIdInfo><envirDesc Sync="TRUE"> Version 6.2 (Build 9200) ; Esri ArcGIS 10.1.1.3300</envirDesc><dataLang><languageCode value="eng" Sync="TRUE"></languageCode><countryCode value="USA" Sync="TRUE"></countryCode></dataLang><idCitation><resTitle Sync="TRUE">psnerp_oceanographic_subbasin_utm</resTitle><presForm><PresFormCd value="005" Sync="TRUE"></PresFormCd></presForm></idCitation><spatRpType><SpatRepTypCd value="001" Sync="TRUE"></SpatRepTypCd></spatRpType></dataIdInfo><mdLang><languageCode value="eng" Sync="TRUE"></languageCode><countryCode value="USA" Sync="TRUE"></countryCode></mdLang><mdChar><CharSetCd value="006" Sync="TRUE"></CharSetCd></mdChar><distInfo><distFormat><formatName Sync="TRUE">Shapefile</formatName></distFormat><distTranOps><transSize Sync="TRUE">0.000</transSize></distTranOps></distInfo><mdHrLv><ScopeCd value="005" Sync="TRUE"></ScopeCd></mdHrLv><mdHrLvName Sync="TRUE">dataset</mdHrLvName><refSysInfo><RefSystem><refSysID><identCode code="26910" Sync="TRUE"></identCode><idCodeSpace Sync="TRUE">EPSG</idCodeSpace><idVersion Sync="TRUE">7.11.2</idVersion></refSysID></RefSystem></refSysInfo><spatRepInfo><VectSpatRep><geometObjs Name="psnerp_oceanographic_subbasin_utm"><geoObjTyp><GeoObjTypCd value="002" Sync="TRUE"></GeoObjTypCd></geoObjTyp><geoObjCnt Sync="TRUE">0</geoObjCnt></geometObjs><topLvl><TopoLevCd value="001" Sync="TRUE"></TopoLevCd></topLvl></VectSpatRep></spatRepInfo></metadata>
