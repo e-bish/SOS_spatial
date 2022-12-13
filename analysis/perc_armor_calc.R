@@ -21,17 +21,19 @@ armor <- read_sf(armor, crs = 2927) #Washington State Plane South (ft) / NAD83
 #GPS locations for our survey stations with each ipa
 SOS_sites <- here("data", "SOS_site_coords.csv")
 SOS_sites <- read_csv(SOS_sites) %>% 
-  st_as_sf(coords = c("long", "lat"), crs = 4326) #WGS84
-
-#transform site coordinates into the same datum as the shoreline layer
-SOS_sites <- SOS_sites %>% st_transform(crs = st_crs(shoreline))
+  st_as_sf(coords = c("long", "lat"), crs = 4326) %>% #WGS84
+  st_transform(crs = 2927) #transform site coordinates into the same datum as the shoreline layer
 
 # map it!
-# map <- ggplot() +
-#   geom_sf(data = shoreline) +
-#   geom_sf(data = armor, color = "red") +
-#   geom_sf(data = SOS_sites, color = "blue", cex = 2)
-# map
+map <- ggplot() +
+  geom_sf(data = shoreline) +
+  geom_sf(data = armor, color = "red") +
+  geom_sf(data = SOS_sites, color = "blue", cex = 2) +
+  coord_sf(xlim = c(-123.5, -122), ylim = c(47, 48.75), crs = 4326) +
+  theme(plot.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+map
 
 ################################################################################
 #create site buffers and crop armor extent to buffer
@@ -84,6 +86,32 @@ a_buffered <- rbind(a_100m, a_500m, a_1km) %>%
 perc_armor <- inner_join(s_buffered, a_buffered, ID = c("site", "buffer")) %>% 
   mutate(perc.armor = (armor_length/shore_length)*100) 
 
+################################################################################
+#calculate % armor by basin
+
+#PSNERP PS basins outline
+PSNERPbasins <- here("data","PSNERP_PS_basins", "psnerp_oceanographic_subbasins_geo.shp")
+PSNERPbasins <- read_sf(PSNERPbasins) %>% st_transform(crs = 2927) #Washington State Plane South (ft) / NAD83
+
+#this takes a long time
+basin_armor1 <- st_intersection(armor, PSNERPbasins) 
+
+basin_armor <- basin_armor1 %>% 
+  group_by(SUBBASIN) %>% 
+  summarize(armor_length = sum(SHAPE_Length)) %>% 
+  st_drop_geometry()
+  
+basin_shoreline <- st_intersection(shoreline, PSNERPbasins) %>% 
+  mutate(shore_length = st_length(geometry)) %>% 
+  group_by(SUBBASIN) %>% 
+  summarize(shore_length = sum(shore_length)) %>% 
+  st_drop_geometry()
+
+a_basin <- inner_join(basin_armor, basin_shoreline, ID = c("SUBBASIN")) %>% 
+  mutate(perc.armor = (armor_length/shore_length)*100) %>% 
+  mutate(perc.armor = drop_units(perc.armor)) %>% 
+  mutate(perc.armor = round(perc.armor, 2))
+
 ###############################################################################
 #format to integrate with catch data
 perc_armor <- perc_armor %>% 
@@ -108,29 +136,5 @@ perc_armor <- perc_armor %>%
 
 #write to csv
 #write_csv(perc_armor, here("data","perc_armor.csv"))
-
-################################################################################
-#calculate % armor by basin
-
-#PSNERP PS basins outline
-basins <- here("data","PSNERP_PS_basins", "psnerp_oceanographic_subbasins_geo.shp")
-basins <- read_sf(basins) %>% st_transform(crs = st_crs(shoreline)) #Washington State Plane South (ft) / NAD83
-
-#shows basins but takes a super long time
-# mapb <- ggplot() +
-#   geom_sf(data = basins) +
-#   geom_sf(data = shoreline) +
-#   geom_sf(data = armor, color = "red") +
-#   geom_sf(data = SOS_sites, color = "blue", cex = 2)  
-# mapb
-
-#this also takes a long time
-a_basin <- st_intersection(armor, basins) 
-
-
-a_basin2 <- a_basin %>% 
-  group_by(SUBBASIN, SHAPE_Length) %>% #shape length should be ok to use
-  summarize(armor_length = sum(SHAPE_Length))
-
 
 

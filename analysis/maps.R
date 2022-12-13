@@ -16,6 +16,14 @@ shoreline <- here("data","shorezone_shoreline_only", "shorezone_shoreline_only.s
 shoreline <- read_sf(shoreline, crs = 2927) %>%  #Washington State Plane South (ft) / NAD83
   st_transform(crs = 4326)
 
+#PSNERP PS basins outline
+PSNERPbasins <- here("data","PSNERP_PS_basins", "psnerp_oceanographic_subbasins_geo.shp")
+PSNERPbasins <- read_sf(PSNERPbasins) %>% st_transform(crs = 4326) #Washington State Plane South (ft) / NAD83
+
+#NOAA PS basins outline
+NOAAbasins <- here("data","NOAA_PS_basins", "noaa_ps_oceanographic_basins_geo.shp")
+NOAAbasins <- read_sf(NOAAbasins) %>% st_transform(crs = 4326) #Washington State Plane South (ft) / NAD83
+
 #Beach Strategies armoring shapefile
 armor <- here("data","WDFW_ESRP_Shoreline_Armor.gdb")
 armor <- read_sf(armor, crs = 2927) %>% #Washington State Plane South (ft) / NAD83
@@ -45,6 +53,7 @@ basic_armor_map <- ggplot() +
         axis.title.y = element_blank())
 basic_armor_map
 
+#Zoom in to sites
 seahurst <- basic_armor_map +
   geom_sf(data = armor, color = "red", lwd = 1) +
   coord_sf(xlim = c(-122.4, -122.35), ylim = c(47.45, 47.5))
@@ -53,3 +62,13 @@ edgewater <- basic_armor_map +
   geom_sf(data = armor, color = "red", lwd = 1) +
   coord_sf(xlim = c(-123, -122.5), ylim = c(47, 47.3))
 
+#check out options for puget sound basins
+basins_map <- ggplot() + 
+  geom_sf(data = PSNERPbasins, aes(fill = SUBBASIN)) +
+  geom_sf(data = shoreline) +
+  geom_sf(data = NOAAbasins, fill = "transparent") +
+  coord_sf(xlim = c(-123.5, -122), ylim = c(47, 48.75)) +
+  theme(plot.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+basins_map
