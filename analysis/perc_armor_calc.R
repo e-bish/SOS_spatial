@@ -27,11 +27,11 @@ SOS_sites <- read_csv(SOS_sites) %>%
 SOS_sites <- SOS_sites %>% st_transform(crs = st_crs(shoreline))
 
 # map it!
-map <- ggplot() +
-  geom_sf(data = shoreline) +
-  geom_sf(data = armor, color = "red") +
-  geom_sf(data = SOS_sites, color = "blue", cex = 2) 
-map
+# map <- ggplot() +
+#   geom_sf(data = shoreline) +
+#   geom_sf(data = armor, color = "red") +
+#   geom_sf(data = SOS_sites, color = "blue", cex = 2)
+# map
 
 ################################################################################
 #create site buffers and crop armor extent to buffer
@@ -51,14 +51,14 @@ b_1km <- st_buffer(SOS_site_cents, 3937.01) #3280.84ft in 1km, so this is actual
 Site <- SOS_sites %>% filter(site == "Seahurst") %>% st_buffer(5000)
 
 #map it with buffers!
-map.b <- ggplot() +
-  geom_sf(data = st_intersection(shoreline, Site)) +
-  geom_sf(data = st_intersection(armor, Site), color = "red") +
-  geom_sf(data = st_intersection(SOS_site_cents, Site), color = "black") +
-  geom_sf(data = st_intersection(b_100m, Site), fill = NA, color = "blue") +
-  geom_sf(data = st_intersection(b_500m, Site), fill = NA, color = "yellow") +
-  geom_sf(data = st_intersection(b_1km, Site), fill = NA, color = "green") 
-map.b
+# map.b <- ggplot() +
+#   geom_sf(data = st_intersection(shoreline, Site)) +
+#   geom_sf(data = st_intersection(armor, Site), color = "red") +
+#   geom_sf(data = st_intersection(SOS_site_cents, Site), color = "black") +
+#   geom_sf(data = st_intersection(b_100m, Site), fill = NA, color = "blue") +
+#   geom_sf(data = st_intersection(b_500m, Site), fill = NA, color = "yellow") +
+#   geom_sf(data = st_intersection(b_1km, Site), fill = NA, color = "green") 
+# map.b
 
 #crop shoreline to buffers
 s_100m <- st_intersection(shoreline, b_100m) %>% mutate(buffer = "100m")
@@ -107,10 +107,30 @@ perc_armor <- perc_armor %>%
   add_row(site = c("PR", "WA", "HO")) #remove this when we get coords for these sites
 
 #write to csv
-write_csv(perc_armor, here("data","perc_armor.csv"))
+#write_csv(perc_armor, here("data","perc_armor.csv"))
 
 ################################################################################
 #calculate % armor by basin
+
+#PSNERP PS basins outline
+basins <- here("data","PSNERP_PS_basins", "psnerp_oceanographic_subbasins_geo.shp")
+basins <- read_sf(basins) %>% st_transform(crs = st_crs(shoreline)) #Washington State Plane South (ft) / NAD83
+
+#shows basins but takes a super long time
+# mapb <- ggplot() +
+#   geom_sf(data = basins) +
+#   geom_sf(data = shoreline) +
+#   geom_sf(data = armor, color = "red") +
+#   geom_sf(data = SOS_sites, color = "blue", cex = 2)  
+# mapb
+
+#this also takes a long time
+a_basin <- st_intersection(armor, basins) 
+
+
+a_basin2 <- a_basin %>% 
+  group_by(SUBBASIN, SHAPE_Length) %>% #shape length should be ok to use
+  summarize(armor_length = sum(SHAPE_Length))
 
 
 
