@@ -160,8 +160,8 @@ lambda_rest <- lambda_arm*exp(-logb*a) #restored
 
 lambda <- c(lambda_nat, lambda_arm)
 
-# plot <- data.frame(a, l_rest)
-# ggplot(plot, aes(x = a, y = l_rest)) +
+# plot <- data.frame(a, lambda_rest)
+# ggplot(plot, aes(x = a, y = lambda_rest)) +
 #   geom_point()
 
 #matrix algebra!
