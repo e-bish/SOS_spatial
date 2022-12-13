@@ -25,15 +25,15 @@ SOS_sites <- read_csv(SOS_sites) %>%
   st_transform(crs = 2927) #transform site coordinates into the same datum as the shoreline layer
 
 # map it!
-map <- ggplot() +
-  geom_sf(data = shoreline) +
-  geom_sf(data = armor, color = "red") +
-  geom_sf(data = SOS_sites, color = "blue", cex = 2) +
-  coord_sf(xlim = c(-123.5, -122), ylim = c(47, 48.75), crs = 4326) +
-  theme(plot.background = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
-map
+# map <- ggplot() +
+#   geom_sf(data = shoreline) +
+#   geom_sf(data = armor, color = "red") +
+#   geom_sf(data = SOS_sites, color = "blue", cex = 2) +
+#   coord_sf(xlim = c(-123.5, -122), ylim = c(47, 48.75), crs = 4326) +
+#   theme(plot.background = element_blank(),
+#         panel.grid.major = element_blank(),
+#         panel.grid.minor = element_blank())
+# map
 
 ################################################################################
 #create site buffers and crop armor extent to buffer
@@ -83,8 +83,11 @@ a_buffered <- rbind(a_100m, a_500m, a_1km) %>%
   summarize(armor_length = sum(armor_length)) #sum feet of armoring per site
 
 #calculate percent armor
-perc_armor <- inner_join(s_buffered, a_buffered, ID = c("site", "buffer")) %>% 
-  mutate(perc.armor = (armor_length/shore_length)*100) 
+site_armor <- inner_join(s_buffered, a_buffered, ID = c("site", "buffer")) %>% 
+  mutate(perc.armor = (armor_length/shore_length)*100) %>% 
+  dplyr::select(-c(OBJECTID, shore_length, armor_length)) %>% 
+  mutate(perc.armor = drop_units(perc.armor)) %>% 
+  mutate(perc.armor = round(perc.armor, 2)) 
 
 ################################################################################
 #calculate % armor by basin
@@ -93,38 +96,46 @@ perc_armor <- inner_join(s_buffered, a_buffered, ID = c("site", "buffer")) %>%
 PSNERPbasins <- here("data","PSNERP_PS_basins", "psnerp_oceanographic_subbasins_geo.shp")
 PSNERPbasins <- read_sf(PSNERPbasins) %>% st_transform(crs = 2927) #Washington State Plane South (ft) / NAD83
 
-#this takes a long time
-basin_armor1 <- st_intersection(armor, PSNERPbasins) 
-
-basin_armor <- basin_armor1 %>% 
+#assign armor extent to basins
+basin_armor <- st_intersection(armor, PSNERPbasins) %>% #this takes a long time
   group_by(SUBBASIN) %>% 
   summarize(armor_length = sum(SHAPE_Length)) %>% 
   st_drop_geometry()
   
+#sum shoreline by basin
 basin_shoreline <- st_intersection(shoreline, PSNERPbasins) %>% 
   mutate(shore_length = st_length(geometry)) %>% 
   group_by(SUBBASIN) %>% 
   summarize(shore_length = sum(shore_length)) %>% 
   st_drop_geometry()
 
+#convert armor extent to percent armor by basin, assign to sites
 a_basin <- inner_join(basin_armor, basin_shoreline, ID = c("SUBBASIN")) %>% 
   mutate(perc.armor = (armor_length/shore_length)*100) %>% 
   mutate(perc.armor = drop_units(perc.armor)) %>% 
   mutate(perc.armor = round(perc.armor, 2))
 
+site_basins <- st_intersection(SOS_site_cents, PSNERPbasins) %>% 
+  st_drop_geometry() %>% 
+  add_row(site = "Cornet_Bay", SUBBASIN = "WH") #might be able to drop this with new coords, it just doesn't 
+#currently overlap with the PSNERP basins layer
+
+site_basin_armor <- inner_join(a_basin, site_basins, ID = c("SUBBASIN")) %>% 
+  dplyr::select(-c(shore_length, armor_length)) %>% 
+  relocate(site) %>% 
+  rename("buffer"= "SUBBASIN")
+
 ###############################################################################
 #format to integrate with catch data
-perc_armor <- perc_armor %>% 
-  dplyr::select(-c(OBJECTID, shore_length, armor_length)) %>% 
-  mutate(perc.armor = drop_units(perc.armor)) %>% 
-  mutate(perc.armor = round(perc.armor, 2)) %>% 
+perc_armor <- rbind(site_armor, site_basin_armor) %>%
+  mutate(buffer = replace(buffer, !endsWith(buffer, "m"), "basin")) %>% 
   pivot_wider(names_from = buffer, values_from = perc.armor) %>% 
   replace(is.na(.), 0) %>% 
   transform(site = case_when(site == "Dockton" ~ "DOK",
                              site == "Cornet_Bay" ~ "COR",
                              site == "Edgewater" ~ "EDG",
                              site == "Family_Tides" ~ "FAM",
-                             site == "Seahurst" ~ "SHR",
+                             site == "Seahurst" ~ "SHR", 
                              site == "Turn_Island" ~ "TUR",
                              site == "Lost_Lake" ~ "LL",
                              site == "Titlow" ~ "TL",
@@ -136,5 +147,4 @@ perc_armor <- perc_armor %>%
 
 #write to csv
 #write_csv(perc_armor, here("data","perc_armor.csv"))
-
 

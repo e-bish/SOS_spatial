@@ -86,6 +86,8 @@ net_list <- net_all2 %>% group_split(species)
 
 ################################################################################
 ##Chinook 
+#chinook <- net_list[[1]]
+#write_csv(chinook, here("data", "chinook.csv"))
 
 #Check simple model to get an estimate for theta
 base.mod <- glm.nb(total ~ 1, data = net_list[[1]], link = "log")
