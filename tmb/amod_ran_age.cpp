@@ -36,7 +36,7 @@ Type objective_function<Type>::operator() ()
     lambda[2] = lambda[1]*exp(-b*a[i]); 
     
     //objective function
-    logmu[i] = X[i] * beta + Z[i] * gamma + L[i] * lambda; //on the whiteboard we had lambda[i] but doesn't that not work because it has a different number of elements? 
+    logmu(i) = X(i) * beta + Z(i) * gamma + L(i) * lambda; //on the whiteboard we had lambda[i] but doesn't that not work because it has a different number of elements? 
     
     //mean mu for each row
     mu[i] = exp(logmu[i]);
