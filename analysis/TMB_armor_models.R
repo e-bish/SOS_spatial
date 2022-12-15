@@ -158,7 +158,7 @@ logb <- 0.5
 a <- chinook$rest_age
 lambda_rest <- lambda_arm*exp(-logb*a) #restored
 
-lambda <- c(lambda_nat, lambda_arm)
+lambda <- c(lambda_arm, lambda_nat)
 
 # plot <- data.frame(a, lambda_rest)
 # ggplot(plot, aes(x = a, y = lambda_rest)) +
