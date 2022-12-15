@@ -7,35 +7,39 @@ library(sf)
 
 #outline of washington counties with shorelines
 #downloaded from https://hub.arcgis.com/datasets/kingcounty::washington-counties-with-natural-shoreline-washsh-area/explore?location=-13.160727%2C-91.266482%2C1.23
-wa_shorelines <- here::here("data","WA_Shorelines", "Washington_Counties_with_Natural_Shoreline___washsh_area.shp")
-wa_shorelines <- read_sf(wa_shorelines) %>%
-  st_transform(wa_counties, crs = 4269) #NAD83
+wa_shorelines <- here("data","WA_Shorelines", "Washington_Counties_with_Natural_Shoreline___washsh_area.shp") %>% 
+  read_sf() %>% st_transform(crs = 4269) #NAD83
 
 #Shorezone shoreline shapefile
-shoreline <- here("data","shorezone_shoreline_only", "shorezone_shoreline_only.shp")
-shoreline <- read_sf(shoreline, crs = 2927) %>%  #Washington State Plane South (ft) / NAD83
-  st_transform(crs = 4326)
+shoreline <- here("data","shorezone_shoreline_only", "shorezone_shoreline_only.shp") %>% 
+  read_sf(crs = 2927) %>%  #Washington State Plane South (ft) / NAD83
+  st_transform(crs = 4269)
 
 #PSNERP PS basins outline
-PSNERPbasins <- here("data","PSNERP_PS_basins", "psnerp_oceanographic_subbasins_geo.shp")
-PSNERPbasins <- read_sf(PSNERPbasins) %>% st_transform(crs = 4326) #Washington State Plane South (ft) / NAD83
+PSNERPbasins <- here("data","PSNERP_PS_basins", "psnerp_oceanographic_subbasins_geo.shp") %>% 
+  read_sf() %>% st_transform(crs = 4269) 
 
 #NOAA PS basins outline
-NOAAbasins <- here("data","NOAA_PS_basins", "noaa_ps_oceanographic_basins_geo.shp")
-NOAAbasins <- read_sf(NOAAbasins) %>% st_transform(crs = 4326) #Washington State Plane South (ft) / NAD83
+NOAAbasins <- here("data","NOAA_PS_basins", "noaa_ps_oceanographic_basins_geo.shp") %>% 
+  read_sf() %>% st_transform(crs = 4269)
 
 #Beach Strategies armoring shapefile
-armor <- here("data","WDFW_ESRP_Shoreline_Armor.gdb")
-armor <- read_sf(armor, crs = 2927) %>% #Washington State Plane South (ft) / NAD83
-  st_transform(crs = 4326)
+armor <- here("data","WDFW_ESRP_Shoreline_Armor.gdb") %>% 
+  read_sf(crs = 2927) %>% #Washington State Plane South (ft) / NAD83
+  st_transform(crs = 4269)
 
 #GPS locations for our survey stations with each ipa
-SOS_sites <- here("data", "SOS_site_coords.csv")
-SOS_sites <- read_csv(SOS_sites) %>% 
-  st_as_sf(coords = c("long", "lat"), crs = 4326) #WGS84
+SOS_sites <- here("data", "SOS_site_coords.csv") %>% 
+  read_csv() %>% 
+  st_as_sf(coords = c("long", "lat"), crs = 4326)  %>% #WGS84
+  st_transform(crs = 4269) #transform site coordinates into the same datum as the shoreline layer
 
-#transform site coordinates into the same datum as the shoreline layer
-SOS_sites <- SOS_sites %>% st_transform(crs = st_crs(shoreline))
+#GPS locations for armor removal projects since 2015 (completed before the beach strategies update)
+#but only the ones in the basins we surveyed in this study
+armor_rest <- here("data", "Recent_armor_removal.csv") %>% 
+  read_csv() %>% 
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326)  %>% #WGS84
+  st_transform(crs = 4269) #transform coordinates into the same datum as the shoreline layer
 
 # Super basic map just showing outline of PS shorelines and armoring in red
 basic_armor_map <- ggplot() +
@@ -72,3 +76,28 @@ basins_map <- ggplot() +
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 basins_map
+
+#### figure out a way to automatically zoom into individual sites 
+# get map range from this layer for flowlines call
+mapRange <- range(SOS_site_cents)
+
+           #rest project map
+rest_project_map <- ggplot() +
+  geom_sf(data = shoreline) +
+  geom_sf(data = armor, color = "red", lwd = 0.75) +
+  geom_sf(data = armor_rest, color = "blue") +
+  theme(plot.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  coord_sf(xlim = mapRange1[c(1:2)], ylim = mapRange1[c(3:4)])
+rest_project_map
+
+EDG_zoom <- coord_sf(xlim = c(-123, -122.8), ylim = c(47, 47.3))
+SHR_zoom <- SOS_site_cents %>% filter(site == "Seahurst") %>% st_buffer(5000)
+
+#Zoom in particular sites!
+#set a center point for each site 
+SOS_site_cents <- SOS_sites %>%
+  group_by(site) %>% 
+  summarize(geometry = st_union(geometry)) %>% 
+  st_centroid()

@@ -1,0 +1,27 @@
+﻿site,official_site_name,alias,phase,location,latitude,longitude,site_access,primary_shoretype,restoration,year_removal,month_year_removal,length_restoration,removal,nourishment,logs,vegetation,checked_by
+Ala Spit,ala,,1,Whidbey_Island,48.393075,-122.58656,Public,Accretion_Shoreform,completed,2015,,435,y,y,y,n,
+Bowman Bay,bowman,,1,Deception_Pass,48.416081,-122.65104,Public,Pocket_Beach,completed,2015,Nov-15,540,y,y,y,y,Morgan
+Brown Island,brown,,1,San_Juans,48.535298,-123.0008,Private,Accretion_Shoreform,completed,2015,Oct-15,200,y,y,n,y,Faulkner
+Family Tides (West Sound),familytides,West Sound,1,San_Juans,48.616382,-122.98079,Private,Pocket_Beach,completed,2015,Feb-16,150,y,n,n,y,Faulkner
+Edgewater,edgewater,,1,Eld_Inlet,47.15325,-122.92968,Private,Feeder_Bluff,completed,2016,16-Nov,791,y,n,n,n,Faulkner
+Howarth Park,howarth,,1,Everett,47.964086,-122.24106,Public,Transport_Zone,completed,2016,Aug-16,317,y,y,y,y,Faulkner
+Waterman,waterman,,1,Whidbey_Island,47.999547,-122.37168,Private,Feeder_Bluff,completed,2016,Oct-16,434,y,n,n,n,Faulkner
+Fisherman Bay,fisherman,,1,San_Juans,48.517639,-122.9198,Public,No_Appreciable_Drift,completed,2017,Jun-17,300,y,n,n,n,
+Titlow,titlow,,1,Tacoma,47.24945,-122.5521,Public,Feeder_Bluff,completed,2017,Jan-17,150,y,n,n,n,Faulkner
+Blind Bay,blindbay,,1,San_Juans,48.574883,-122.92976,Private,Feeder_Bluff,completed,2017,,750,y,y,n,n,
+Big Beach,bigbeach,Forest Glen,1,Vashon_Island,47.34582,-122.4914,Public,Feeder_Bluff,completed,2018,Sep-18,400,y,n,n,n,Bianca Perla
+Kukutali Preserve,kukutali,,1,Similk_Bay,48.420797,-122.55972,Public,Tombolo,completed,2018,Aug-18,300,y,n,n,n,Morgan
+Kukutali Preserve,kukutali,,1,Similk_Bay,48.42083,-122.5596,Public,Tombolo,completed,2018,Aug-18,300,y,n,n,n,Morgan
+Lost Lake,lostlake,Lostlake1,1,Vashon_Island,47.3606,-122.48857,Public,Feeder_Bluff,completed,2018,Sep-18,150,y,n,n,n,Bianca Perla
+Maylor Point,maylor,,1,Whidbey_Island,48.268515,-122.62736,Private,Feeder_Bluff,completed,2018,Oct-18,1500,y,n,n,n,Morgan
+Sunlight Shores,sunlight,,1,Whidbey_Island,47.985432,-122.46787,Private,Accretion_Shoreform,completed,2018,10/1/2018,350,y,n,n,y,Morgan
+Piner Point 2018,piner,Piner Point,1,Maury_Island,47.34329,-122.45894,Public,Feeder_Bluff,completed,2018,Aug-18,105,y,n,n,n,Bianca Perla
+Ross Point,ross,,1,Sinclair_Inlet,47.539747,-122.66174,Public,Transport_Zone,completed,2019,Aug-19,84,y,n,n,n,Faulkner
+Dockton Park east,dockton,Dockton 2020,2,Maury_Island,47.37152,-122.45298,Public,Feeder_Bluff,completed,2020,Aug-20,225,y,n,n,n,Bianca Perla
+Salmon point community beach,salmonpoint,,1,San_Juans,48.437164,-122.87866,Private,Pocket_Beach,completed,2021,Nov-21,120,y,n,n,y,
+Seahorse Siesta,seahorse,,1,Whidbey_Island,48.043659,-122.42281,Private,Feeder_Bluff,completed,2021,Mar-21,136,y,n,n,n,
+Similk Bay,similk,,1,Anacortes,48.4350083,-122.57833,Private,Accretion_Shoreform,completed,2021,12/1/2021,190,y,y,n,y,Morgan
+Tahlequah,tahlequah,,1,Vashon_Island,47.33305,-122.5075,Private,Transport_Zone,completed,2021,Aug-2021,260,y,y,y,y,Bianca Perla
+Lost Lake,lostlake,lostlake2,2,Vashon_Island,47.361,-122.4883,Public,Feeder_Bluff,completed,2022,Aug-22,225,y,y,y,n,Bianca Perla
+Lowman park,lowman,,1,Seattle,47.540359,-122.39746,Public,Accretion_Shoreform,completed,2022,May-22,150,y,n,y,y,JT
+Piner Point 2022,piner2,"PP2, Piner Point 2",1,Maury_Island,47.346,-122.4538,Public,Feeder_Bluff,completed,2022,Aug-22,225,y,n,n,n,Bianca Perla

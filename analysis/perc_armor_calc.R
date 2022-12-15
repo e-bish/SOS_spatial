@@ -11,16 +11,16 @@ library(units)
 ## load data and inspect
 
 #Shorezone shoreline shapefile
-shoreline <- here("data","shorezone_shoreline_only", "shorezone_shoreline_only.shp")
-shoreline <- read_sf(shoreline, crs = 2927) #Washington State Plane South (ft) / NAD83
+shoreline <- here("data","shorezone_shoreline_only", "shorezone_shoreline_only.shp") %>% 
+  read_sf(crs = 2927) #Washington State Plane South (ft) / NAD83
 
 #Beach Strategies armoring shapefile
-armor <- here("data","WDFW_ESRP_Shoreline_Armor.gdb")
-armor <- read_sf(armor, crs = 2927) #Washington State Plane South (ft) / NAD83
+armor <- here("data","WDFW_ESRP_Shoreline_Armor.gdb") %>% 
+  read_sf(crs = 2927) #Washington State Plane South (ft) / NAD83
 
 #GPS locations for our survey stations with each ipa
-SOS_sites <- here("data", "SOS_site_coords.csv")
-SOS_sites <- read_csv(SOS_sites) %>% 
+SOS_sites <- here("data", "SOS_site_coords.csv") %>% 
+  read_csv() %>% 
   st_as_sf(coords = c("long", "lat"), crs = 4326) %>% #WGS84
   st_transform(crs = 2927) #transform site coordinates into the same datum as the shoreline layer
 
@@ -53,14 +53,14 @@ b_1km <- st_buffer(SOS_site_cents, 3937.01) #3280.84ft in 1km, so this is actual
 Site <- SOS_sites %>% filter(site == "Seahurst") %>% st_buffer(5000)
 
 #map it with buffers!
-# map.b <- ggplot() +
-#   geom_sf(data = st_intersection(shoreline, Site)) +
-#   geom_sf(data = st_intersection(armor, Site), color = "red") +
-#   geom_sf(data = st_intersection(SOS_site_cents, Site), color = "black") +
-#   geom_sf(data = st_intersection(b_100m, Site), fill = NA, color = "blue") +
-#   geom_sf(data = st_intersection(b_500m, Site), fill = NA, color = "yellow") +
-#   geom_sf(data = st_intersection(b_1km, Site), fill = NA, color = "green") 
-# map.b
+map.b <- ggplot() +
+  geom_sf(data = st_intersection(shoreline, Site)) +
+  geom_sf(data = st_intersection(armor, Site), color = "red") +
+  geom_sf(data = st_intersection(SOS_site_cents, Site), color = "black") +
+  geom_sf(data = st_intersection(b_100m, Site), fill = NA, color = "blue") +
+  geom_sf(data = st_intersection(b_500m, Site), fill = NA, color = "yellow") +
+  geom_sf(data = st_intersection(b_1km, Site), fill = NA, color = "green")
+map.b
 
 #crop shoreline to buffers
 s_100m <- st_intersection(shoreline, b_100m) %>% mutate(buffer = "100m")
