@@ -33,11 +33,14 @@ Type objective_function<Type>::operator() ()
   for(int i = 0; i < n; i++) { 
     
     //lambda_rest is a function of lambda_arm and restoration age
-    lambda[2] = lambda[1]*exp(-b*a[i]); 
+     lambda(2) = lambda[1]*exp(-b*a[i]); 
     
     //objective function
-    logmu(i) = X(i) * beta + Z(i) * gamma + L(i) * lambda; //on the whiteboard we had lambda[i] but doesn't that not work because it has a different number of elements? 
-    
+    vector<Type> xtmp = X.row(i);
+    vector<Type> ztmp = Z.row(i);
+    vector<Type> ltmp = L.row(i);
+      
+    logmu(i) = (xtmp * beta).sum(); + (ztmp * gamma).sum() + (ltmp * lambda).sum(); //on the whiteboard we had lambda[i] but doesn't that not work because it has a different number of elements? 
     //mean mu for each row
     mu[i] = exp(logmu[i]);
     
